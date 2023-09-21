@@ -1,0 +1,25 @@
+{
+	"name": "capkit-init",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"bin": {
+		"capkit": "./index.js"
+	},
+	"scripts": {
+		"format": "prettier . --write ."
+	},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"dependencies": {
+		"@capacitor/android": "^5.4.0",
+		"@capacitor/cli": "^5.4.1",
+		"@capacitor/core": "^5.4.1",
+		"@capacitor/ios": "^5.4.1",
+		"@clack/prompts": "^0.7.0",
+		"commander": "^11.0.0",
+		"prettier": "^3.0.3"
+	},
+	"type": "module"
+}
