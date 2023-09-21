@@ -3,7 +3,7 @@
 
 # CapKit
 
-The CapKit CLI is a command-line tool that simplifies the process of configuring Capacitor with SvelteKit. With CapKit, you can quickly set up Capacitor for your SvelteKit app, making it easy to build and deploy native mobile applications as well as progressive web apps.
+The CapKit CLI is a command-line interface that simplifies the process of configuring Capacitor with SvelteKit. With CapKit, you can quickly set up Capacitor for your SvelteKit app, making it easy to build and deploy native mobile applications as well as progressive web apps.
 
 ## Installation
 
