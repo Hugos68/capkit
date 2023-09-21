@@ -16,8 +16,6 @@ Upon doing this, you will be guided through a series of questions to help you co
 
 ## Usage
 
-To help improve the integration more the capkit CLI adds two scripts to your package.json.
-
 ### Development
 
 When working with native applications and using their respective IDE's (Android Studio or Xcode) you can enable hot reloading by running:
