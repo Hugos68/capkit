@@ -86,6 +86,7 @@ async function initializeProject({ name: appName, id: appId, platforms }) {
 			stop: 'Successfully built project',
 			task: async () => asyncExec('npm run build')
 		});
+		
 		jobs.push({
 			start: 'Syncing platforms',
 			stop: 'Successfully synced platforms',
