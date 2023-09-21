@@ -13,3 +13,4 @@ vite.config.ts.timestamp-*
 /android
 /ios
 capacitor.config.json.timestamp-*
+capacitor.config.json

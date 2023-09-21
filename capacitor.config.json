@@ -1,1 +1,5 @@
-{ "appId": "test.tes.test", "appName": "test", "webDir": "build" }
+{
+	"appId": "test.test.app",
+	"appName": "test-app",
+	"webDir": "build"
+}

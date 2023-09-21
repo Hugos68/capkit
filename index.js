@@ -2,7 +2,7 @@
 import { Command } from 'commander';
 import { intro, text, multiselect, outro, spinner } from '@clack/prompts';
 import { exec } from 'child_process';
-import { promises as fs } from 'fs';
+import { promises as fs, existsSync, mkdirSync } from 'fs';
 
 const program = new Command();
 program.version('0.0.1');
@@ -67,7 +67,10 @@ async function initializeProject({ name: appName, id: appId, platforms }) {
 		start: 'Creating capacitor.config.json',
 		stop: 'Successfully created capacitor.config.json',
 		task: async () =>
-			fs.writeFile('capacitor.config.json', JSON.stringify({ appId, appName, webDir: 'build' }))
+			fs.writeFile(
+				'capacitor.config.json',
+				JSON.stringify({ appId, appName, webDir: 'build' }, null, 2)
+			)
 	});
 
 	if (platforms.length > 0) {
@@ -86,7 +89,7 @@ async function initializeProject({ name: appName, id: appId, platforms }) {
 			stop: 'Successfully built project',
 			task: async () => asyncExec('npm run build')
 		});
-		
+
 		jobs.push({
 			start: 'Syncing platforms',
 			stop: 'Successfully synced platforms',
@@ -94,14 +97,32 @@ async function initializeProject({ name: appName, id: appId, platforms }) {
 		});
 	}
 
-	// jobs.push({
-	// 	start: 'Creating hotreload scripts',
-	// 	stop: 'Successfully created hotreload scripts',
-	// 	task: async () => Promise.all([
-	// 		fs.writeFile('/test/hotreload.js', (await fs.readFile('scripts/hotreload.js'))),
-	// 		fs.writeFile('/test/hotreload-cleanup.js', (await fs.readFile('scripts/hotreload-cleanup.js')))
-	// 	])
-	// });
+	jobs.push({
+		start: 'Creating hotreload scripts',
+		stop: 'Successfully created hotreload scripts',
+		task: async () => {
+			if (!existsSync('./test')) mkdirSync('./test');
+			return Promise.all([
+				fs.writeFile('./scripts/hotreload.js', String(await fs.readFile('./scripts/hotreload.js'))),
+				fs.writeFile(
+					'./scripts/hotreload-cleanup.js',
+					String(await fs.readFile('./scripts/hotreload-cleanup.js'))
+				)
+			]);
+		}
+	});
+
+	jobs.push({
+		start: 'Adding custom scripts to package.json',
+		stop: 'Successfully added custom scripts to package.json',
+		task: async () => {
+			const packageJson = JSON.parse(await fs.readFile('package.json'));
+			packageJson.scripts['dev:cap'] =
+				'node ./scripts/hotreload.js && npx cap sync && node ./scripts/hotreload-cleanup.js && npm run build';
+			packageJson.scripts['build:cap'] = 'npm run build && npx cap sync';
+			return fs.writeFile('package.json', JSON.stringify(packageJson, null, 2));
+		}
+	});
 
 	await executeJobs(jobs);
 }
@@ -111,7 +132,12 @@ async function executeJobs(jobs) {
 		const { start, stop, task } = jobs[i];
 		const s = spinner();
 		s.start(start);
-		await task();
+		try {
+			await task();
+		} catch (e) {
+			s.stop(`Error: ${e.message}`);
+			throw e;
+		}
 		s.stop(stop);
 	}
 }
