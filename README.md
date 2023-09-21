@@ -44,6 +44,14 @@ If you are solely focusing on building a progressive web app you can run:
 npm run build
 ```
 
+## Capacitor
+
+For further questions about Capacitor you can refer to the [Capacitor Docs](https://capacitorjs.com/docs).
+
+## Issues
+
+If you encounter any issues or have concerns, please take a moment to [report them](https://github.com/Hugos68/capkit/issues/new). Your feedback is greatly appreciated and improves the quality of CapKit.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
