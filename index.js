@@ -13,11 +13,9 @@ program
 	.description('Initialize capkit')
 	.action(async () => {
 		intro('Welcome to the capkit CLI!');
-		promptOptions().then((options) => {
-			initializeProject(options).then(() => {
-				outro(`You're all set!`);
-			});
-		});
+		const options = await promptOptions();
+		await initializeProject(options);
+		outro(`You're all set!`);
 	});
 program.parse(process.argv);
 
