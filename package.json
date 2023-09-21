@@ -1,31 +1,25 @@
 {
-	"name": "capkit",
-	"version": "0.1",
-	"description": "",
-	"main": "index.js",
-	"bin": {
-		"capkit": "./index.js"
-	},
-	"scripts": {
-		"format": "prettier . --write .",
-		"dev:cap": "node ./scripts/hotreload.js && npx cap sync && node ./scripts/hotreload-cleanup.js && npm run build",
-		"build:cap": "npm run build && npx cap sync"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/Hugos68/capkit"
-	},
-	"keywords": [],
-	"author": "Hugo Korte",
-	"license": "MIT",
-	"dependencies": {
-		"@capacitor/android": "^5.4.1",
-		"@capacitor/cli": "^5.4.1",
-		"@capacitor/core": "^5.4.1",
-		"@capacitor/ios": "^5.4.1",
-		"@clack/prompts": "^0.7.0",
-		"commander": "^11.0.0",
-		"prettier": "^3.0.3"
-	},
-	"type": "module"
+  "name": "capkit",
+  "version": "0.1",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "capkit": "./index.js"
+  },
+  "scripts": {
+    "format": "prettier . --write ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hugos68/capkit"
+  },
+  "keywords": [],
+  "author": "Hugo Korte",
+  "license": "MIT",
+  "dependencies": {
+    "@clack/prompts": "^0.7.0",
+    "commander": "^11.0.0",
+    "prettier": "^3.0.3"
+  },
+  "type": "module"
 }

@@ -147,7 +147,7 @@ async function executeJobs(jobs) {
 			await task();
 		} catch (e) {
 			s.stop(`Error: ${e.message}`);
-			throw e;
+			return;
 		}
 		s.stop(stop);
 	}
