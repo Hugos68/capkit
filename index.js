@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
-import { intro, text, multiselect, outro, spinner } from '@clack/prompts';
+import { intro, text, multiselect, confirm, cancel, outro, spinner } from '@clack/prompts';
 import { exec } from 'child_process';
 import { promises as fs, existsSync, mkdirSync } from 'fs';
 
@@ -13,9 +13,20 @@ program
 	.description('Initialize capkit')
 	.action(async () => {
 		intro('Welcome to the capkit CLI!');
+		if (existsSync('capacitor.config.json')) {
+			const shouldContinue = await confirm({
+				message: 'capacitor.config.json already exists, are you sure you want to continue?'
+			});
+			if (!shouldContinue) {
+				cancel('Opration canceled');
+				return;
+			}
+		}
 		const options = await promptOptions();
 		await initializeProject(options);
-		outro(`You're all set!`);
+		outro(
+			'Successfully configured Capacitor, happy coding!\n\nIf you run into any issues please report them here: https://github.com/Hugos68/capkit/issues/new'
+		);
 	});
 program.parse(process.argv);
 

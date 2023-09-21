@@ -7,7 +7,9 @@
 		"capkit": "./index.js"
 	},
 	"scripts": {
-		"format": "prettier . --write ."
+		"format": "prettier . --write .",
+		"dev:cap": "node ./scripts/hotreload.js && npx cap sync && node ./scripts/hotreload-cleanup.js && npm run build",
+		"build:cap": "npm run build && npx cap sync"
 	},
 	"repository": {
 		"type": "git",
