@@ -2,7 +2,6 @@ import { exec } from 'child_process';
 import { existsSync } from 'fs';
 
 export function asyncExec(command) {
-	console.log(command);
 	return new Promise((resolve, reject) => {
 		const child = exec(command);
 		child.addListener('error', (err) => reject(err));
