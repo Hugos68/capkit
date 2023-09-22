@@ -7,6 +7,8 @@ The CapKit CLI is a command-line interface that simplifies the process of config
 
 ## Installation
 
+Before starting be aware that Capacitor will only work with [Adapter Static](https://kit.svelte.dev/docs/adapter-static), be sure you have this configured correctly.
+
 To get started with the CLI you can simply go into your existing sveltekit project and run:
 
 ```bash
