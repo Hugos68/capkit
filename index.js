@@ -211,11 +211,15 @@ async function initializeProject({
 		start: 'Copying hotreload scripts',
 		stop: 'Successfully copied hotreload scripts',
 		task: async () => {
-			if (existsSync('/scripts')) await fs.mkdir('./scripts');
+			const root = process.cwd() + '/';
+			if (existsSync(`${root}/scripts`)) await fs.mkdir(`${root}/scripts`);
 			return Promise.all([
-				fs.writeFile('./scripts/hotreload.js', String(await fs.readFile('./scripts/hotreload.js'))),
 				fs.writeFile(
-					'./scripts/hotreload-cleanup.js',
+					`${root}/scripts/hotreload.js`,
+					String(await fs.readFile('./scripts/hotreload.js'))
+				),
+				fs.writeFile(
+					`${root}/scripts/hotreload-cleanup.js`,
 					String(await fs.readFile('./scripts/hotreload-cleanup.js'))
 				)
 			]);
