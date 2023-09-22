@@ -152,8 +152,8 @@ async function initializeProject({
 	});
 
 	jobs.push({
-		start: 'Installing: "\x1b[1mCapacitor\x1b[0m"',
-		stop: 'Successfully installed: "\x1b[1mCapacitor\x1b[0m"',
+		start: 'Installing \x1b[1mCapacitor\x1b[0m',
+		stop: 'Successfully installed \x1b[1mCapacitor\x1b[0m',
 		task: async () => {
 			await asyncExec(`${pm} install @capacitor/cli`);
 			return asyncExec(`${pm} install @capacitor/core`);
@@ -208,19 +208,19 @@ async function initializeProject({
 	});
 
 	jobs.push({
-		start: 'Copying hotreload scripts',
-		stop: 'Successfully copied hotreload scripts',
+		start: 'Copying \x1b[1mhotreload scripts\x1b[0m',
+		stop: 'Successfully copied \x1b[1mhotreload scripts\x1b[0m',
 		task: async () => {
-			const root = process.cwd() + '/';
-			if (existsSync(`${root}/scripts`)) await fs.mkdir(`${root}/scripts`);
+			const root = process.cwd();
+			if (!existsSync(`${root}/scripts`)) await fs.mkdir(`${root}/scripts`);
 			return Promise.all([
 				fs.writeFile(
 					`${root}/scripts/hotreload.js`,
-					String(await fs.readFile('./scripts/hotreload.js'))
+					String(await fs.readFile('./assets/hotreload.js'))
 				),
 				fs.writeFile(
 					`${root}/scripts/hotreload-cleanup.js`,
-					String(await fs.readFile('./scripts/hotreload-cleanup.js'))
+					String(await fs.readFile('./assets/hotreload-cleanup.js'))
 				)
 			]);
 		}

@@ -8,7 +8,9 @@
 	},
 	"scripts": {
 		"format": "prettier . --write .",
-		"release": "changeset publish --access public"
+		"release": "changeset publish --access public",
+		"dev:cap": "node ./scripts/hotreload.js && npx cap sync && node ./scripts/hotreload-cleanup.js && npm run build",
+		"build:cap": "vite build && npx cap sync"
 	},
 	"repository": {
 		"type": "git",
@@ -24,6 +26,8 @@
 	},
 	"license": "MIT",
 	"dependencies": {
+		"@capacitor/cli": "^5.4.1",
+		"@capacitor/core": "^5.4.1",
 		"@changesets/cli": "^2.26.2",
 		"@clack/prompts": "^0.7.0",
 		"commander": "^11.0.0",
