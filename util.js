@@ -1,5 +1,5 @@
 import { exec } from 'child_process';
-import { existsSync } from 'fs';
+import { existsSync, lstatSync } from 'fs';
 
 export function asyncExec(command) {
 	return new Promise((resolve, reject) => {
@@ -18,7 +18,7 @@ export function getConfigExtension() {
 	}
 }
 
-export function whichPMRuns() {
+export function getPM() {
 	const userAgent = process.env.npm_config_user_agent;
 	if (!userAgent) {
 		return 'npm';
@@ -26,8 +26,9 @@ export function whichPMRuns() {
 	const pmSpec = userAgent.split(' ')[0] || '';
 	const separatorPos = pmSpec.lastIndexOf('/');
 	const name = pmSpec?.substring(0, separatorPos);
-	return {
-		name: name === 'npminstall' ? 'npm' : name,
-		version: pmSpec?.substring(separatorPos + 1)
-	};
+	return name === 'npminstall' ? 'npm' : name;
+}
+
+export async function isDirectory(path) {
+	return lstatSync(path).isDirectory();
 }

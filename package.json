@@ -1,37 +1,33 @@
 {
-	"name": "capkit",
-	"version": "0.2.0",
-	"description": "",
-	"main": "index.js",
-	"bin": {
-		"capkit": "./index.js"
-	},
-	"scripts": {
-		"format": "prettier . --write .",
-		"release": "changeset publish --access public",
-		"dev:cap": "node ./scripts/hotreload.js && npx cap sync && node ./scripts/hotreload-cleanup.js && npm run build",
-		"build:cap": "vite build && npx cap sync"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/Hugos68/capkit"
-	},
-	"publishConfig": {
-		"access": "public"
-	},
-	"keywords": [],
-	"author": {
-		"name": "Hugo Korte",
-		"url": "https://github.com/Hugos68"
-	},
-	"license": "MIT",
-	"dependencies": {
-		"@capacitor/cli": "^5.4.1",
-		"@capacitor/core": "^5.4.1",
-		"@changesets/cli": "^2.26.2",
-		"@clack/prompts": "^0.7.0",
-		"commander": "^11.0.0",
-		"prettier": "^3.0.3"
-	},
-	"type": "module"
+  "name": "capkit",
+  "version": "0.2.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "capkit": "./index.js"
+  },
+  "scripts": {
+    "format": "prettier . --write .",
+    "release": "changeset publish --access public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hugos68/capkit"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Hugo Korte",
+    "url": "https://github.com/Hugos68"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@changesets/cli": "^2.26.2",
+    "@clack/prompts": "^0.7.0",
+    "commander": "^11.0.0",
+    "prettier": "^3.0.3"
+  },
+  "type": "module"
 }

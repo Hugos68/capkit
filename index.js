@@ -2,7 +2,9 @@
 import { Command } from 'commander';
 import { intro, text, multiselect, confirm, cancel, outro, spinner } from '@clack/prompts';
 import { promises as fs, existsSync } from 'fs';
-import { asyncExec, getConfigExtension, whichPMRuns } from './util.js';
+import { asyncExec, getConfigExtension, getPM, isDirectory } from './util.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 const program = new Command();
 
@@ -117,7 +119,7 @@ async function promptOptions() {
 		});
 	}
 
-	const pm = whichPMRuns().name;
+	const pm = getPM();
 
 	return {
 		name,
@@ -211,11 +213,18 @@ async function initializeProject({
 		start: 'Copying \x1b[1mhotreload scripts\x1b[0m',
 		stop: 'Successfully copied \x1b[1mhotreload scripts\x1b[0m',
 		task: async () => {
-			const root = process.cwd();
-			if (!existsSync(`${root}/scripts`)) await fs.mkdir(`${root}/scripts`);
+			const packageDir = path.dirname(fileURLToPath(import.meta.url));
+			const consumerDir = process.cwd();
+
+			if (!existsSync(`${consumerDir}/scripts`) || !isDirectory(`${consumerDir}/scripts`))
+				await fs.mkdir(`${consumerDir}\\scripts`);
+
 			return Promise.all([
-				fs.copyFile(`${root}/assets/hotreload.js`, `${root}/scripts/hotreload.js`),
-				fs.copyFile(`${root}/assets/hotreload-cleanup.js`, `${root}/scripts/hotreload-cleanup.js`)
+				fs.copyFile(`${packageDir}/assets/hotreload.js`, `${consumerDir}/scripts/hotreload.js`),
+				fs.copyFile(
+					`${packageDir}/assets/hotreload-cleanup.js`,
+					`${consumerDir}/scripts/hotreload-cleanup.js`
+				)
 			]);
 		}
 	});
