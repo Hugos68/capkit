@@ -13,8 +13,14 @@
 		"type": "git",
 		"url": "https://github.com/Hugos68/capkit"
 	},
+	"publishConfig": {
+		"access": "public"
+	},
 	"keywords": [],
-	"author": "Hugo Korte",
+	"author": {
+		"name": "Hugo Korte",
+		"url": "https://github.com/Hugos68"
+	},
 	"license": "MIT",
 	"dependencies": {
 		"@changesets/cli": "^2.26.2",
