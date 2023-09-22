@@ -5,6 +5,7 @@ import { promises as fs, existsSync } from 'fs';
 import { asyncExec, getConfigExtension, getPM, isDirectory } from './util.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { bold, underline, grey, cyan } from 'kleur';
 
 const program = new Command();
 
@@ -15,11 +16,13 @@ program
 	.alias('init')
 	.description('Initialize capkit')
 	.action(async () => {
-		intro('Welcome to the capkit CLI!');
+		intro(`Welcome to the ${underline('capkit')} CLI!`);
 		const options = await promptOptions();
 		await initializeProject(options);
 		outro(
-			`You're all set! Happy coding!\n\nIf you run into any issues please report them here: https://github.com/Hugos68/capkit/issues/new`
+			`You're all set! Happy coding!\n\n${grey(
+				'If you run into any issues, please report them here: https://github.com/Hugos68/capkit/issues/new'
+			)}`
 		);
 	});
 program.parse(process.argv);
@@ -29,7 +32,11 @@ async function promptOptions() {
 
 	if (configExtension) {
 		const shouldContinue = await confirm({
-			message: `Found existing Capacitor config: "\x1b[1mcapacitor.config.${configExtension}\x1b[0m". Proceeding will \x1b[4moverwrite your current configuration\x1b[0m. Do you want to continue?`
+			message: `Found existing Capacitor config: "${cyan(
+				`capacitor.config.${configExtension}`
+			)}".\nProceeding will ${underline(
+				'overwrite your current configuration'
+			)}. Do you want to continue?`
 		});
 		if (!shouldContinue) {
 			cancel('Operation canceled');
@@ -40,13 +47,13 @@ async function promptOptions() {
 	const packageJsonName = JSON.parse(await fs.readFile('package.json'))['name'];
 
 	const name = await text({
-		message: 'What is the name of your project?',
+		message: `What is the ${underline('name')} of your project?`,
 		placeholder: packageJsonName,
 		required: true
 	});
 
 	const id = await text({
-		message: 'What is the ID of your project?',
+		message: `What is the ${underline('ID')} of your project?`,
 		placeholder: `com.company.${name}`,
 		validate: (value) =>
 			/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(value.toLowerCase())
@@ -142,8 +149,8 @@ async function initializeProject({
 	const jobs = [];
 
 	jobs.push({
-		start: 'Configuring: "\x1b[1mpackage.json\x1b[0m"',
-		stop: 'Successfully configured: "\x1b[1mpackage.json\x1b[0m"',
+		start: `Configuring: "${cyan('package.json')}"`,
+		stop: `Successfully configured: "${cyan('package.json')}"`,
 		task: async () => {
 			const packageJson = JSON.parse(await fs.readFile('package.json'));
 			packageJson.scripts['dev:cap'] =
@@ -154,8 +161,8 @@ async function initializeProject({
 	});
 
 	jobs.push({
-		start: 'Installing \x1b[1mCapacitor\x1b[0m',
-		stop: 'Successfully installed \x1b[1mCapacitor\x1b[0m',
+		start: 'Installing Capacitor',
+		stop: 'Successfully installed Capacitor',
 		task: async () => {
 			await asyncExec(`${pm} install @capacitor/cli`);
 			return asyncExec(`${pm} install @capacitor/core`);
@@ -193,15 +200,17 @@ async function initializeProject({
 
 	if (configExtension) {
 		jobs.push({
-			start: `Removing existing config: "\x1b[1mcapacitor.config.${configExtension}\x1b[0m"`,
-			stop: `Successfully removed existing config: "\x1b[1mcapacitor.config.${configExtension}\x1b[0m"`,
+			start: `Removing existing config: "${cyan(`capacitor.config.${configExtension}`)}"`,
+			stop: `Successfully removed existing config: "${cyan(
+				`capacitor.config.${configExtension}`
+			)}"`,
 			task: async () => fs.unlink(`capacitor.config.${configExtension}`)
 		});
 	}
 
 	jobs.push({
-		start: 'Creating: "\x1b[1mcapacitor.config.json\x1b[0m"',
-		stop: 'Successfully created: "\x1b[1mcapacitor.config.json\x1b[0m"',
+		start: `Creating: "${cyan('capacitor.config.json')}"`,
+		stop: `Successfully created: "${cyan('capacitor.config.json')}"`,
 		task: async () =>
 			fs.writeFile(
 				'capacitor.config.json',
@@ -210,19 +219,19 @@ async function initializeProject({
 	});
 
 	jobs.push({
-		start: 'Copying \x1b[1mhotreload scripts\x1b[0m',
-		stop: 'Successfully copied \x1b[1mhotreload scripts\x1b[0m',
+		start: 'Importing custom scripts',
+		stop: 'Successfully imported custom scripts',
 		task: async () => {
 			const packageDir = path.dirname(fileURLToPath(import.meta.url));
 			const consumerDir = process.cwd();
 
 			if (!existsSync(`${consumerDir}/scripts`) || !isDirectory(`${consumerDir}/scripts`))
-				await fs.mkdir(`${consumerDir}\\scripts`);
+				await fs.mkdir(`${consumerDir}/scripts`);
 
 			return Promise.all([
-				fs.copyFile(`${packageDir}/assets/hotreload.js`, `${consumerDir}/scripts/hotreload.js`),
+				fs.copyFile(`${packageDir}/scripts/hotreload.js`, `${consumerDir}/scripts/hotreload.js`),
 				fs.copyFile(
-					`${packageDir}/assets/hotreload-cleanup.js`,
+					`${packageDir}/scripts/hotreload-cleanup.js`,
 					`${consumerDir}/scripts/hotreload-cleanup.js`
 				)
 			]);
