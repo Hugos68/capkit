@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { intro, text, multiselect, confirm, cancel, outro, spinner } from '@clack/prompts';
-import { exec } from 'child_process';
 import { promises as fs, existsSync } from 'fs';
+import { asyncExec, getConfigExtension, whichPMRuns } from './util.js';
 
 const program = new Command();
 
@@ -53,35 +53,141 @@ async function promptOptions() {
 		required: true
 	});
 
-	const platforms = await multiselect({
-		message: 'What platforms do you want to add? (Optional)',
-		options: [
-			{ value: 'Android', label: 'Android' },
-			{ value: 'iOS', label: 'iOS' }
-		],
-		required: false
+	const shouldPromptPlatforms = await confirm({
+		message: 'Do you want to add additional platforms?'
 	});
+
+	let selectedPlatforms;
+	if (shouldPromptPlatforms) {
+		const platforms = ['Android', 'iOS'];
+		selectedPlatforms = await multiselect({
+			message: 'What platforms do you want to add? (Optional)',
+			options: platforms.map((platform) => {
+				return {
+					value: platform.toLowerCase(),
+					label: platform
+				};
+			}),
+			required: false
+		});
+	}
+
+	const plugins = [
+		'Action Sheet',
+		'App',
+		'App Launcher',
+		'Browser',
+		'Camera',
+		'Clipboard',
+		'Device',
+		'Dialog',
+		'Filesystem',
+		'Geolocation',
+		'Google Maps',
+		'Haptics',
+		'Keyboard',
+		'Local Notifications',
+		'Motion',
+		'Network',
+		'Preferences',
+		'Push Notifications',
+		'Screen Reader',
+		'Share',
+		'Splash Screen',
+		'Status Bar',
+		'Text Zoom',
+		'Toast'
+	];
+
+	const shouldPromptPlugins = await confirm({
+		message: 'Do you want to add additional plugins?'
+	});
+
+	let selectedPlugins;
+	if (shouldPromptPlugins) {
+		selectedPlugins = await multiselect({
+			message: 'What plugins do you want to add? (Optional)',
+			options: plugins.map((plugin) => {
+				return {
+					value: plugin.toLowerCase().replace(/ /g, '-'),
+					label: plugin
+				};
+			}),
+			required: false
+		});
+	}
+
+	const pm = whichPMRuns().name;
 
 	return {
 		name,
 		id,
-		platforms,
-		configExtension
+		selectedPlatforms,
+		selectedPlugins,
+		configExtension,
+		pm
 	};
 }
 
-async function initializeProject({ name: appName, id: appId, platforms, configExtension }) {
+async function initializeProject({
+	name: appName,
+	id: appId,
+	selectedPlatforms,
+	configExtension,
+	selectedPlugins,
+	pm
+}) {
 	const jobs = [];
 
 	jobs.push({
-		start: 'Installing Capacitor',
-		stop: 'Successfully installed Capacitor',
-		task: async () =>
-			Promise.all([
-				asyncExec('npm install @capacitor/core'),
-				asyncExec('npm install @capacitor/cli')
-			])
+		start: 'Configuring: "\x1b[1mpackage.json\x1b[0m"',
+		stop: 'Successfully configured: "\x1b[1mpackage.json\x1b[0m"',
+		task: async () => {
+			const packageJson = JSON.parse(await fs.readFile('package.json'));
+			packageJson.scripts['dev:cap'] =
+				'node ./scripts/hotreload.js && npx cap sync && node ./scripts/hotreload-cleanup.js && npm run build';
+			packageJson.scripts['build:cap'] = 'vite build && npx cap sync';
+			return fs.writeFile('package.json', JSON.stringify(packageJson, null, 2));
+		}
 	});
+
+	jobs.push({
+		start: 'Installing: "\x1b[1mCapacitor\x1b[0m"',
+		stop: 'Successfully installed: "\x1b[1mCapacitor\x1b[0m"',
+		task: async () => {
+			await asyncExec(`${pm} install @capacitor/cli`);
+			return asyncExec(`${pm} install @capacitor/core`);
+		}
+	});
+
+	if (selectedPlatforms) {
+		jobs.push({
+			start: 'Adding additional platforms.',
+			stop: 'Successfully added additional platforms.',
+			task: async () => {
+				for (let i = 0; i < selectedPlatforms.length; i++) {
+					const platform = selectedPlatforms[i];
+					await asyncExec(`${pm} install @capacitor/${platform}`);
+					await asyncExec(`npx cap add ${platform}`);
+				}
+			}
+		});
+	}
+
+	if (selectedPlugins) {
+		jobs.push({
+			start: 'Adding additional plugins.',
+			stop: 'Successfully added additional plugins.',
+			task: async () => {
+				let installCommand = `${pm} install`;
+				for (let i = 0; i < selectedPlugins.length; i++) {
+					const platform = selectedPlugins[i];
+					installCommand += ` @capacitor/${platform}`;
+				}
+				return await asyncExec(installCommand);
+			}
+		});
+	}
 
 	if (configExtension) {
 		jobs.push({
@@ -101,25 +207,11 @@ async function initializeProject({ name: appName, id: appId, platforms, configEx
 			)
 	});
 
-	if (platforms.length > 0) {
-		jobs.push({
-			start: `Adding platforms (${platforms})`,
-			stop: `Successfully added platforms (${platforms})`,
-			task: async () =>
-				Promise.all(
-					platforms.map((platform) =>
-						asyncExec(
-							`npm install @capacitor/${platform.toLowerCase()} && npx cap add ${platform.toLowerCase()}`
-						)
-					)
-				)
-		});
-	}
-
 	jobs.push({
-		start: 'Creating hotreload scripts',
-		stop: 'Successfully created hotreload scripts',
+		start: 'Copying hotreload scripts',
+		stop: 'Successfully copied hotreload scripts',
 		task: async () => {
+			if (existsSync('/scripts')) await fs.mkdir('./scripts');
 			return Promise.all([
 				fs.writeFile('./scripts/hotreload.js', String(await fs.readFile('./scripts/hotreload.js'))),
 				fs.writeFile(
@@ -127,18 +219,6 @@ async function initializeProject({ name: appName, id: appId, platforms, configEx
 					String(await fs.readFile('./scripts/hotreload-cleanup.js'))
 				)
 			]);
-		}
-	});
-
-	jobs.push({
-		start: 'Adding custom scripts to package.json',
-		stop: 'Successfully added custom scripts to package.json',
-		task: async () => {
-			const packageJson = JSON.parse(await fs.readFile('package.json'));
-			packageJson.scripts['dev:cap'] =
-				'node ./scripts/hotreload.js && npx cap sync && node ./scripts/hotreload-cleanup.js && npm run build';
-			packageJson.scripts['build:cap'] = 'npm run build && npx cap sync';
-			return fs.writeFile('package.json', JSON.stringify(packageJson, null, 2));
 		}
 	});
 
@@ -154,26 +234,9 @@ async function executeJobs(jobs) {
 			await task();
 		} catch (e) {
 			s.stop();
-			cancel('Error: ${e.message}');
+			cancel(`Error: ${e.message}`);
 			process.exit(-1);
 		}
 		s.stop(stop);
-	}
-}
-
-function asyncExec(command) {
-	return new Promise((resolve, reject) => {
-		const child = exec(command);
-		child.addListener('error', reject);
-		child.addListener('exit', resolve);
-	});
-}
-
-function getConfigExtension() {
-	const configExtensions = ['json', 'js', 'ts'];
-	for (const extension of configExtensions) {
-		if (existsSync(`capacitor.config.${extension}`)) {
-			return extension;
-		}
 	}
 }
