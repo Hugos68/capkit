@@ -214,14 +214,8 @@ async function initializeProject({
 			const root = process.cwd();
 			if (!existsSync(`${root}/scripts`)) await fs.mkdir(`${root}/scripts`);
 			return Promise.all([
-				fs.writeFile(
-					`${root}/scripts/hotreload.js`,
-					String(await fs.readFile('./assets/hotreload.js'))
-				),
-				fs.writeFile(
-					`${root}/scripts/hotreload-cleanup.js`,
-					String(await fs.readFile('./assets/hotreload-cleanup.js'))
-				)
+				fs.copyFile(`${root}/assets/hotreload.js`, `${root}/scripts/hotreload.js`),
+				fs.copyFile(`${root}/assets/hotreload-cleanup.js`, `${root}/scripts/hotreload-cleanup.js`)
 			]);
 		}
 	});
