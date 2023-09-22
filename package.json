@@ -1,25 +1,25 @@
 {
-  "name": "capkit",
-  "version": "0.1",
-  "description": "",
-  "main": "index.js",
-  "bin": {
-    "capkit": "./index.js"
-  },
-  "scripts": {
-    "format": "prettier . --write ."
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Hugos68/capkit"
-  },
-  "keywords": [],
-  "author": "Hugo Korte",
-  "license": "MIT",
-  "dependencies": {
-    "@clack/prompts": "^0.7.0",
-    "commander": "^11.0.0",
-    "prettier": "^3.0.3"
-  },
-  "type": "module"
+	"name": "capkit",
+	"version": "0.1",
+	"description": "",
+	"main": "index.js",
+	"bin": {
+		"capkit": "./index.js"
+	},
+	"scripts": {
+		"format": "prettier . --write ."
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Hugos68/capkit"
+	},
+	"keywords": [],
+	"author": "Hugo Korte",
+	"license": "MIT",
+	"dependencies": {
+		"@clack/prompts": "^0.7.0",
+		"commander": "^11.0.0",
+		"prettier": "^3.0.3"
+	},
+	"type": "module"
 }

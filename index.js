@@ -2,9 +2,10 @@
 import { Command } from 'commander';
 import { intro, text, multiselect, confirm, cancel, outro, spinner } from '@clack/prompts';
 import { exec } from 'child_process';
-import { promises as fs, existsSync, mkdirSync } from 'fs';
+import { promises as fs, existsSync } from 'fs';
 
 const program = new Command();
+
 program.version('0.0.1');
 
 program
@@ -13,24 +14,27 @@ program
 	.description('Initialize capkit')
 	.action(async () => {
 		intro('Welcome to the capkit CLI!');
-		if (existsSync('capacitor.config.json')) {
-			const shouldContinue = await confirm({
-				message: 'capacitor.config.json already exists, are you sure you want to continue?'
-			});
-			if (!shouldContinue) {
-				cancel('Opration canceled');
-				return;
-			}
-		}
 		const options = await promptOptions();
 		await initializeProject(options);
 		outro(
-			'Successfully configured Capacitor, happy coding!\n\nIf you run into any issues please report them here: https://github.com/Hugos68/capkit/issues/new'
+			`You're all set! Happy coding!\n\nIf you run into any issues please report them here: https://github.com/Hugos68/capkit/issues/new`
 		);
 	});
 program.parse(process.argv);
 
 async function promptOptions() {
+	const configExtension = getConfigExtension();
+
+	if (configExtension) {
+		const shouldContinue = await confirm({
+			message: `Found existing Capacitor config: "\x1b[1mcapacitor.config.${configExtension}\x1b[0m". Proceeding will \x1b[4moverwrite your current configuration\x1b[0m. Do you want to continue?`
+		});
+		if (!shouldContinue) {
+			cancel('Operation canceled');
+			process.exit(1);
+		}
+	}
+
 	const packageJsonName = JSON.parse(await fs.readFile('package.json'))['name'];
 
 	const name = await text({
@@ -52,8 +56,8 @@ async function promptOptions() {
 	const platforms = await multiselect({
 		message: 'What platforms do you want to add? (Optional)',
 		options: [
-			{ value: 'iOS', label: 'iOS' },
-			{ value: 'Android', label: 'Android' }
+			{ value: 'Android', label: 'Android' },
+			{ value: 'iOS', label: 'iOS' }
 		],
 		required: false
 	});
@@ -61,22 +65,35 @@ async function promptOptions() {
 	return {
 		name,
 		id,
-		platforms
+		platforms,
+		configExtension
 	};
 }
 
-async function initializeProject({ name: appName, id: appId, platforms }) {
+async function initializeProject({ name: appName, id: appId, platforms, configExtension }) {
 	const jobs = [];
 
 	jobs.push({
 		start: 'Installing Capacitor',
 		stop: 'Successfully installed Capacitor',
-		task: async () => asyncExec('npm install @capacitor/core @capacitor/cli')
+		task: async () =>
+			Promise.all([
+				asyncExec('npm install @capacitor/core'),
+				asyncExec('npm install @capacitor/cli')
+			])
 	});
 
+	if (configExtension) {
+		jobs.push({
+			start: `Removing existing config: "\x1b[1mcapacitor.config.${configExtension}\x1b[0m"`,
+			stop: `Successfully removed existing config: "\x1b[1mcapacitor.config.${configExtension}\x1b[0m"`,
+			task: async () => fs.unlink(`capacitor.config.${configExtension}`)
+		});
+	}
+
 	jobs.push({
-		start: 'Creating capacitor.config.json',
-		stop: 'Successfully created capacitor.config.json',
+		start: 'Creating: "\x1b[1mcapacitor.config.json\x1b[0m"',
+		stop: 'Successfully created: "\x1b[1mcapacitor.config.json\x1b[0m"',
 		task: async () =>
 			fs.writeFile(
 				'capacitor.config.json',
@@ -86,25 +103,16 @@ async function initializeProject({ name: appName, id: appId, platforms }) {
 
 	if (platforms.length > 0) {
 		jobs.push({
-			start: 'Adding platforms',
-			stop: 'Successfully added platforms',
+			start: `Adding platforms (${platforms})`,
+			stop: `Successfully added platforms (${platforms})`,
 			task: async () =>
-				Promise.all([
-					asyncExec('npm install @capacitor/android && npx cap add android'),
-					asyncExec('npm install @capacitor/ios && npx cap add ios')
-				])
-		});
-
-		jobs.push({
-			start: 'Building project',
-			stop: 'Successfully built project',
-			task: async () => asyncExec('npm run build')
-		});
-
-		jobs.push({
-			start: 'Syncing platforms',
-			stop: 'Successfully synced platforms',
-			task: async () => asyncExec('npx cap sync')
+				Promise.all(
+					platforms.map((platform) =>
+						asyncExec(
+							`npm install @capacitor/${platform.toLowerCase()} && npx cap add ${platform.toLowerCase()}`
+						)
+					)
+				)
 		});
 	}
 
@@ -112,7 +120,6 @@ async function initializeProject({ name: appName, id: appId, platforms }) {
 		start: 'Creating hotreload scripts',
 		stop: 'Successfully created hotreload scripts',
 		task: async () => {
-			if (!existsSync('./test')) mkdirSync('./test');
 			return Promise.all([
 				fs.writeFile('./scripts/hotreload.js', String(await fs.readFile('./scripts/hotreload.js'))),
 				fs.writeFile(
@@ -146,8 +153,9 @@ async function executeJobs(jobs) {
 		try {
 			await task();
 		} catch (e) {
-			s.stop(`Error: ${e.message}`);
-			return;
+			s.stop();
+			cancel('Error: ${e.message}');
+			process.exit(-1);
 		}
 		s.stop(stop);
 	}
@@ -159,4 +167,13 @@ function asyncExec(command) {
 		child.addListener('error', reject);
 		child.addListener('exit', resolve);
 	});
+}
+
+function getConfigExtension() {
+	const configExtensions = ['json', 'js', 'ts'];
+	for (const extension of configExtensions) {
+		if (existsSync(`capacitor.config.${extension}`)) {
+			return extension;
+		}
+	}
 }

@@ -12,6 +12,7 @@ To get started with the CLI you can simply go into your existing sveltekit proje
 ```bash
 npx capkit init
 ```
+
 Upon doing this, you will be guided through a series of questions to help you configure your project optimally. These questions will allow you to tailor the setup to your specific requirements.
 
 ## Usage
