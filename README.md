@@ -1,6 +1,13 @@
 <img width="175px" src="https://github.com/Hugos68/sveltekit-capacitor/assets/63101006/3b8324ff-f27d-48a3-a74d-f7aabb2f530e" />
 <img width="200px" src="https://github.com/Hugos68/sveltekit-capacitor/assets/63101006/e748ecc6-2a2d-4dd5-95c2-4ff4cf8a307b" />
 
+---
+
+[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](https://choosealicense.com/licenses/mit/)
+![GitHub last commit](https://img.shields.io/github/last-commit/hugos68/capkit)
+![npm](https://img.shields.io/npm/v/capkit)
+![npm](https://img.shields.io/npm/dt/capkit)
+
 # CapKit
 
 The CapKit CLI is a command-line interface that simplifies the process of configuring Capacitor with SvelteKit. With CapKit, you can quickly set up Capacitor for your SvelteKit app, making it easy to build and deploy native mobile applications as well as progressive web apps.
@@ -29,6 +36,8 @@ bunx capkit init
 ```
 
 Upon doing this, you will be guided through a series of questions to help you configure your project optimally. These questions will allow you to tailor the setup to your specific requirements.
+
+---
 
 ## Usage
 
@@ -72,7 +81,6 @@ bun:
 bunx dev
 ```
 
-
 ### Build
 
 When building to native platforms you can use:
@@ -112,14 +120,19 @@ bun:
 ```bash
 bunx build
 ```
+---
 
 ## Capacitor
 
 For further questions about Capacitor you can refer to the [Capacitor Docs](https://capacitorjs.com/docs).
 
+---
+
 ## Issues
 
 If you encounter any issues or have concerns, please take a moment to [report them](https://github.com/Hugos68/capkit/issues/new). Your feedback is greatly appreciated and improves the quality of CapKit.
+
+---
 
 ## License
 
