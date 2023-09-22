@@ -1,4 +1,5 @@
-<img width="125px" src="https://github.com/Hugos68/sveltekit-capacitor/assets/63101006/3b8324ff-f27d-48a3-a74d-f7aabb2f530e" />
+<img width="125" src="https://github.com/Hugos68/sveltekit-capacitor/assets/63101006/3b8324ff-f27d-48a3-a74d-f7aabb2f530e" />
+<img width="125" src="https://github.com/Hugos68/capkit/assets/63101006/cb12fccf-b42a-46ac-98fc-70cdf8cdf344" />
 <img width="150" src="https://github.com/Hugos68/sveltekit-capacitor/assets/63101006/e748ecc6-2a2d-4dd5-95c2-4ff4cf8a307b" />
 
 ---
