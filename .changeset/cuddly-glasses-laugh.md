@@ -1,0 +1,5 @@
+---
+'capkit': minor
+---
+
+Introducing changesets
