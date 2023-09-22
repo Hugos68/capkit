@@ -8,7 +8,7 @@
 	},
 	"scripts": {
 		"format": "prettier . --write .",
-		"release": "pnpm run build && changeset publish --access public"
+		"release": "changeset publish --access public"
 	},
 	"repository": {
 		"type": "git",
