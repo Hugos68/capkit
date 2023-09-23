@@ -7,3 +7,6 @@ const program = new Command();
 program.version('0.0.1');
 program.command('initialize').alias('init').description('initialize capkit').action(init);
 program.parse(process.argv);
+
+export { initializeProject } from './commands/init.js';
+export { ProjectOptions } from './types/types.js';
