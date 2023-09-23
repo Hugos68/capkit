@@ -5,7 +5,7 @@ import { promises as fs, existsSync } from 'fs';
 import { asyncExec, getConfigExtension, getPM, isDirectory } from './util.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { bold, underline, grey, cyan } from 'kleur';
+import { underline, grey, cyan } from 'kleur';
 
 const program = new Command();
 
