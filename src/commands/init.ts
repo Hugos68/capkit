@@ -139,23 +139,9 @@ async function initializeProject({
 }: ProjectOptions) {
 	const jobs: Job[] = [];
 
-	jobs.push({
-		start: `Configuring: "${kleur.cyan('package.json')}"`,
-		stop: `Successfully configured: "${kleur.cyan('package.json')}"`,
-		task: async () => {
-			const packageJson = JSON.parse(String(await fs.readFile('package.json')));
-			packageJson.scripts['dev:cap'] =
-				'node ./scripts/hotreload.js && npx cap sync && node ./scripts/hotreload-cleanup.js && npm run build';
-			packageJson.scripts['build:cap'] = 'vite build && npx cap sync';
-			return await fs.writeFile('package.json', JSON.stringify(packageJson, null, 2));
-		}
-	});
-
-	jobs.push({
-		start: 'Installing Capacitor',
-		stop: 'Successfully installed Capacitor',
-		task: async () => await asyncExec(`${pm} install @capacitor/cli @capacitor/core`)
-	});
+	/*
+		Configuration jobs
+	*/
 
 	if (configExtension) {
 		jobs.push({
@@ -175,6 +161,41 @@ async function initializeProject({
 				'capacitor.config.json',
 				JSON.stringify({ appId, appName, webDir: 'build' }, null, 2)
 			)
+	});
+
+	jobs.push({
+		start: `Configuring: "${kleur.cyan('package.json')}"`,
+		stop: `Successfully configured: "${kleur.cyan('package.json')}"`,
+		task: async () => {
+			const packageJson = JSON.parse(String(await fs.readFile('package.json')));
+			packageJson.scripts['dev:cap'] =
+				'node ./scripts/hotreload.js && npx cap sync && node ./scripts/hotreload-cleanup.js && npm run build';
+			packageJson.scripts['build:cap'] = 'vite build && npx cap sync';
+			return await fs.writeFile('package.json', JSON.stringify(packageJson, null, 2));
+		}
+	});
+
+	if (existsSync(`${process.cwd()}/.gitignore`)) {
+		jobs.push({
+			start: `Configuring: "${kleur.cyan('.gitignore')}"`,
+			stop: `Successfully configured: "${kleur.cyan('.gitignore')}"`,
+			task: async () => {
+				const gitignores = ['# Capacitor', '/android', '/ios', 'capacitor.config.json.timestamp-*'];
+				const gitignore = await fs.readFile(`${process.cwd()}/.gitignore`, 'utf-8');
+				const newGitignore = gitignore + '\n' + gitignores.join('\n');
+				return fs.writeFile('.gitignore', newGitignore, 'utf-8');
+			}
+		});
+	}
+
+	/*
+		Install jobs
+	*/
+
+	jobs.push({
+		start: 'Installing Capacitor',
+		stop: 'Successfully installed Capacitor',
+		task: async () => await asyncExec(`${pm} install @capacitor/cli @capacitor/core`)
 	});
 
 	if (selectedPlatforms) {
@@ -207,8 +228,8 @@ async function initializeProject({
 	}
 
 	jobs.push({
-		start: 'Importing custom scripts',
-		stop: 'Successfully imported custom scripts',
+		start: 'Installing custom scripts',
+		stop: 'Successfully installed custom scripts',
 		task: async () => {
 			const packageDir = path.dirname(fileURLToPath(import.meta.url));
 			const consumerDir = process.cwd();
@@ -228,19 +249,6 @@ async function initializeProject({
 			);
 		}
 	});
-
-	if (existsSync(`${process.cwd()}/.gitignore`)) {
-		jobs.push({
-			start: `Configuring: "${kleur.cyan('.gitignore')}"`,
-			stop: `Successfully configured: "${kleur.cyan('.gitignore')}"`,
-			task: async () => {
-				const gitignores = ['# Capacitor', '/android', '/ios', 'capacitor.config.json.timestamp-*'];
-				const gitignore = await fs.readFile(`${process.cwd()}/.gitignore`, 'utf-8');
-				const newGitignore = gitignore + '\n' + gitignores.join('\n');
-				return fs.writeFile('.gitignore', newGitignore, 'utf-8');
-			}
-		});
-	}
 
 	await executeJobs(jobs);
 }
