@@ -4,7 +4,7 @@ import { promises as fs, existsSync } from 'fs';
 import { asyncExec, getConfigExtension, getPM, isDirectory, executeJobs } from '../util/util.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { Job, ProjectOptions } from '../types/types.js';
+import { Job, Platform, Plugin, ProjectOptions } from '../types/types.js';
 
 export async function init() {
 	intro(`Welcome to the ${kleur.underline('capkit')} CLI!`);
@@ -58,19 +58,20 @@ async function promptOptions() {
 		message: 'Do you want to add additional platforms?'
 	});
 
-	let selectedPlatforms: string[] | null = null;
+	const platforms = ['Android', 'iOS'];
+
+	let selectedPlatforms: Platform[] | null = null;
 	if (shouldPromptPlatforms) {
-		const platforms = ['Android', 'iOS'];
 		selectedPlatforms = (await multiselect({
 			message: 'What platforms do you want to add?',
 			options: platforms.map((platform) => {
 				return {
-					value: platform.toLowerCase(),
+					value: platform.toLowerCase() as Platform,
 					label: platform
 				};
 			}),
 			required: false
-		})) as string[];
+		})) as Platform[];
 	}
 
 	const plugins = [
@@ -104,18 +105,18 @@ async function promptOptions() {
 		message: 'Do you want to add additional plugins?'
 	});
 
-	let selectedPlugins: string[] | null = null;
+	let selectedPlugins: Plugin[] | null = null;
 	if (shouldPromptPlugins) {
 		selectedPlugins = (await multiselect({
 			message: 'What plugins do you want to add?',
 			options: plugins.map((plugin) => {
 				return {
-					value: plugin.toLowerCase().replace(/ /g, '-'),
+					value: plugin.toLowerCase().replace(/ /g, '-') as Plugin,
 					label: plugin
 				};
 			}),
 			required: false
-		})) as string[];
+		})) as Plugin[];
 	}
 
 	const pm = getPM();
