@@ -129,7 +129,7 @@ async function promptOptions() {
 	return options;
 }
 
-async function initializeProject({
+export async function initializeProject({
 	name: appName,
 	id: appId,
 	selectedPlatforms,
