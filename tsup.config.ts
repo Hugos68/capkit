@@ -7,5 +7,5 @@ export default defineConfig({
 	sourcemap: true,
 	target: 'esnext',
 	outDir: 'dist',
-	dts: true,
+	dts: true
 });
