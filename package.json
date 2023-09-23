@@ -8,9 +8,7 @@
 	},
 	"scripts": {
 		"format": "prettier . --write .",
-		"release": "changeset publish --access public",
-		"dev:cap": "node ./scripts/hotreload.js && npx cap sync && node ./scripts/hotreload-cleanup.js && npm run build",
-		"build:cap": "vite build && npx cap sync"
+		"release": "changeset publish --access public"
 	},
 	"repository": {
 		"type": "git",

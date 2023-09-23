@@ -1,5 +1,17 @@
 # capkit
 
+## 0.4.2
+
+### Patch Changes
+
+- 2343f15: Fixed kleur imports
+
+## 0.4.1
+
+### Patch Changes
+
+- fa374c0: Removed unneccecary import from "kleur" that caused issues using the CLI
+
 ## 0.4.0
 
 ### Minor Changes
