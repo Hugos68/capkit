@@ -169,6 +169,26 @@ async function initializeProject({
 		}
 	});
 
+	if (configExtension) {
+		jobs.push({
+			start: `Removing existing config: "${kleur.cyan(`capacitor.config.${configExtension}`)}"`,
+			stop: `Successfully removed existing config: "${kleur.cyan(
+				`capacitor.config.${configExtension}`
+			)}"`,
+			task: async () => fs.unlink(`capacitor.config.${configExtension}`)
+		});
+	}
+
+	jobs.push({
+		start: `Creating: "${kleur.cyan('capacitor.config.json')}"`,
+		stop: `Successfully created: "${kleur.cyan('capacitor.config.json')}"`,
+		task: async () =>
+			fs.writeFile(
+				'capacitor.config.json',
+				JSON.stringify({ appId, appName, webDir: 'build' }, null, 2)
+			)
+	});
+
 	if (selectedPlatforms) {
 		jobs.push({
 			start: 'Adding additional platforms.',
@@ -197,26 +217,6 @@ async function initializeProject({
 			}
 		});
 	}
-
-	if (configExtension) {
-		jobs.push({
-			start: `Removing existing config: "${kleur.cyan(`capacitor.config.${configExtension}`)}"`,
-			stop: `Successfully removed existing config: "${kleur.cyan(
-				`capacitor.config.${configExtension}`
-			)}"`,
-			task: async () => fs.unlink(`capacitor.config.${configExtension}`)
-		});
-	}
-
-	jobs.push({
-		start: `Creating: "${kleur.cyan('capacitor.config.json')}"`,
-		stop: `Successfully created: "${kleur.cyan('capacitor.config.json')}"`,
-		task: async () =>
-			fs.writeFile(
-				'capacitor.config.json',
-				JSON.stringify({ appId, appName, webDir: 'build' }, null, 2)
-			)
-	});
 
 	jobs.push({
 		start: 'Importing custom scripts',
