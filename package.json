@@ -2,13 +2,15 @@
 	"name": "capkit",
 	"version": "0.5.4",
 	"description": "",
-	"main": "./src/index.js",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"types": "dist/index.d.ts",
 	"bin": {
-		"capkit": "./src/index.js"
+		"capkit": "dist/index.js"
 	},
 	"scripts": {
-		"dev": "tsup --watch",
-		"build": "tsup",
+		"dev": "tsup src/index.ts --format esm --dts --watch",
+		"build": "tsup src/index.ts --format esm --dts",
 		"lint": "prettier --check . && eslint .",
 		"lint:write": "prettier --write . && eslint . --fix",
 		"format": "prettier --write .",
