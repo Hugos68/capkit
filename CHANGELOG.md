@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.6
+
+### Patch Changes
+
+- 9520eef: Added types
+
 ## 0.5.5
 
 ### Patch Changes
