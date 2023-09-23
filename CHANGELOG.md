@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.3
+
+### Patch Changes
+
+- b2392f6: Added export for programmatically initing project
+
 ## 0.5.2
 
 ### Patch Changes
