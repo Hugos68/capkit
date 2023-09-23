@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.2
+
+### Patch Changes
+
+- 7701028: Migrated to typescript
+
 ## 0.5.1
 
 ### Patch Changes
