@@ -7,8 +7,13 @@
 		"capkit": "./src/index.js"
 	},
 	"scripts": {
-		"format": "prettier . --write .",
-		"release": "changeset publish --access public"
+		"dev": "tsup --watch",
+		"build": "tsup",
+		"lint": "prettier --check . && eslint .",
+		"lint:write": "prettier --write . && eslint . --fix",
+		"format": "prettier --write .",
+		"check": "tsc --noEmit",
+		"release": "pnpm run build && changeset publish"
 	},
 	"repository": {
 		"type": "git",
@@ -17,18 +22,34 @@
 	"publishConfig": {
 		"access": "public"
 	},
-	"keywords": [],
+	"keywords": [
+		"CLI",
+		"Svelte",
+		"SvelteKit",
+		"Capacitor"
+	],
 	"author": {
 		"name": "Hugo Korte",
 		"url": "https://github.com/Hugos68"
 	},
 	"license": "MIT",
 	"dependencies": {
-		"@changesets/cli": "^2.26.2",
 		"@clack/prompts": "^0.7.0",
 		"commander": "^11.0.0",
 		"kleur": "^4.1.5",
 		"prettier": "^3.0.3"
 	},
-	"type": "module"
+	"type": "module",
+	"devDependencies": {
+		"@changesets/cli": "^2.26.2",
+		"@types/node": "^20.6.3",
+		"@typescript-eslint/eslint-plugin": "^6.7.2",
+		"@typescript-eslint/parser": "^6.7.2",
+		"eslint-config-prettier": "^9.0.0",
+		"tsup": "^7.2.0",
+		"typescript": "^5.2.2"
+	},
+	"files": [
+		"dist"
+	]
 }
