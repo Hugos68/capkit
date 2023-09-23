@@ -2,7 +2,7 @@ import { cancel } from '@clack/prompts';
 import { spinner } from '@clack/prompts';
 import { exec } from 'child_process';
 import { existsSync, lstatSync } from 'fs';
-import { Job } from '../types/types.js';
+import { ConfigExtension, Job, PackageManager } from '../types/types.js';
 
 export function asyncExec(command: string) {
 	return new Promise((resolve, reject) => {
@@ -16,7 +16,7 @@ export function getConfigExtension() {
 	const configExtensions = ['json', 'js', 'ts'];
 	for (const extension of configExtensions) {
 		if (existsSync(`capacitor.config.${extension}`)) {
-			return extension;
+			return extension as ConfigExtension;
 		}
 	}
 }
@@ -29,7 +29,7 @@ export function getPM() {
 	const pmSpec = userAgent.split(' ')[0] || '';
 	const separatorPos = pmSpec.lastIndexOf('/');
 	const name = pmSpec?.substring(0, separatorPos);
-	return name === 'npminstall' ? 'npm' : name;
+	return name === 'npminstall' ? 'npm' : (name as PackageManager);
 }
 
 export function isDirectory(path: string) {
