@@ -1,31 +1,21 @@
-#!/usr/bin/env node
-import { Command } from 'commander';
-import { intro, text, multiselect, confirm, cancel, outro, spinner } from '@clack/prompts';
+import kleur from 'kleur';
+import { intro, text, multiselect, confirm, cancel, outro } from '@clack/prompts';
 import { promises as fs, existsSync } from 'fs';
-import { asyncExec, getConfigExtension, getPM, isDirectory } from './util.js';
+import { asyncExec, getConfigExtension, getPM, isDirectory, executeJobs } from '../util/util.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import kleur from 'kleur';
+import { Job, ProjectOptions } from '../types/types.js';
 
-const program = new Command();
-
-program.version('0.0.1');
-
-program
-	.command('initialize')
-	.alias('init')
-	.description('initialize capkit')
-	.action(async () => {
-		intro(`Welcome to the ${kleur.underline('capkit')} CLI!`);
-		const options = await promptOptions();
-		await initializeProject(options);
-		outro(
-			`You're all set! Happy coding!\n\n${kleur.grey(
-				'If you run into any issues, please report them here: https://github.com/Hugos68/capkit/issues/new'
-			)}`
-		);
-	});
-program.parse(process.argv);
+export async function init() {
+	intro(`Welcome to the ${kleur.underline('capkit')} CLI!`);
+	const options = await promptOptions();
+	await initializeProject(options);
+	outro(
+		`You're all set! Happy coding!\n\n${kleur.grey(
+			'If you run into any issues, please report them here: https://github.com/Hugos68/capkit/issues/new'
+		)}`
+	);
+}
 
 async function promptOptions() {
 	const configExtension = getConfigExtension();
@@ -44,32 +34,31 @@ async function promptOptions() {
 		}
 	}
 
-	const packageJsonName = JSON.parse(await fs.readFile('package.json'))['name'];
+	const packageJsonName = JSON.parse(String(await fs.readFile('package.json')))['name'];
 
-	const name = await text({
+	const name = (await text({
 		message: `What is the ${kleur.underline('name')} of your project?`,
-		placeholder: packageJsonName,
-		required: true
-	});
+		placeholder: packageJsonName
+	})) as string;
 
 	const id = await text({
 		message: `What is the ${kleur.underline('ID')} of your project?`,
 		placeholder: `com.company.${name}`,
-		validate: (value) =>
-			/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(value.toLowerCase())
-				? null
-				: `Invalid App ID "${value}". Must be in Java package form with no dashes (ex: com.example.app)`,
-		required: true
+		validate: (value) => {
+			if (!/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(value.toLowerCase())) {
+				return `Invalid App ID "${value}". Must be in Java package form with no dashes (ex: com.example.app)`;
+			}
+		}
 	});
 
 	const shouldPromptPlatforms = await confirm({
 		message: 'Do you want to add additional platforms?'
 	});
 
-	let selectedPlatforms;
+	let selectedPlatforms: string[] | null = null;
 	if (shouldPromptPlatforms) {
 		const platforms = ['Android', 'iOS'];
-		selectedPlatforms = await multiselect({
+		selectedPlatforms = (await multiselect({
 			message: 'What platforms do you want to add? (Optional)',
 			options: platforms.map((platform) => {
 				return {
@@ -78,7 +67,7 @@ async function promptOptions() {
 				};
 			}),
 			required: false
-		});
+		})) as string[];
 	}
 
 	const plugins = [
@@ -112,9 +101,9 @@ async function promptOptions() {
 		message: 'Do you want to add additional plugins?'
 	});
 
-	let selectedPlugins;
+	let selectedPlugins: string[] | null = null;
 	if (shouldPromptPlugins) {
-		selectedPlugins = await multiselect({
+		selectedPlugins = (await multiselect({
 			message: 'What plugins do you want to add? (Optional)',
 			options: plugins.map((plugin) => {
 				return {
@@ -123,19 +112,21 @@ async function promptOptions() {
 				};
 			}),
 			required: false
-		});
+		})) as string[];
 	}
 
 	const pm = getPM();
 
-	return {
+	const options = {
 		name,
 		id,
 		selectedPlatforms,
 		selectedPlugins,
 		configExtension,
 		pm
-	};
+	} as ProjectOptions;
+
+	return options;
 }
 
 async function initializeProject({
@@ -145,28 +136,25 @@ async function initializeProject({
 	configExtension,
 	selectedPlugins,
 	pm
-}) {
-	const jobs = [];
+}: ProjectOptions) {
+	const jobs: Job[] = [];
 
 	jobs.push({
 		start: `Configuring: "${kleur.cyan('package.json')}"`,
 		stop: `Successfully configured: "${kleur.cyan('package.json')}"`,
 		task: async () => {
-			const packageJson = JSON.parse(await fs.readFile('package.json'));
+			const packageJson = JSON.parse(String(await fs.readFile('package.json')));
 			packageJson.scripts['dev:cap'] =
 				'node ./scripts/hotreload.js && npx cap sync && node ./scripts/hotreload-cleanup.js && npm run build';
 			packageJson.scripts['build:cap'] = 'vite build && npx cap sync';
-			return fs.writeFile('package.json', JSON.stringify(packageJson, null, 2));
+			return await fs.writeFile('package.json', JSON.stringify(packageJson, null, 2));
 		}
 	});
 
 	jobs.push({
 		start: 'Installing Capacitor',
 		stop: 'Successfully installed Capacitor',
-		task: async () => {
-			await asyncExec(`${pm} install @capacitor/cli`);
-			return asyncExec(`${pm} install @capacitor/core`);
-		}
+		task: async () => await asyncExec(`${pm} install @capacitor/cli @capacitor/core`)
 	});
 
 	if (configExtension) {
@@ -175,7 +163,7 @@ async function initializeProject({
 			stop: `Successfully removed existing config: "${kleur.cyan(
 				`capacitor.config.${configExtension}`
 			)}"`,
-			task: async () => fs.unlink(`capacitor.config.${configExtension}`)
+			task: async () => await fs.unlink(`capacitor.config.${configExtension}`)
 		});
 	}
 
@@ -183,7 +171,7 @@ async function initializeProject({
 		start: `Creating: "${kleur.cyan('capacitor.config.json')}"`,
 		stop: `Successfully created: "${kleur.cyan('capacitor.config.json')}"`,
 		task: async () =>
-			fs.writeFile(
+			await fs.writeFile(
 				'capacitor.config.json',
 				JSON.stringify({ appId, appName, webDir: 'build' }, null, 2)
 			)
@@ -191,8 +179,8 @@ async function initializeProject({
 
 	if (selectedPlatforms) {
 		jobs.push({
-			start: 'Adding additional platforms.',
-			stop: 'Successfully added additional platforms.',
+			start: 'Adding additional platforms',
+			stop: 'Successfully added additional platforms',
 			task: async () => {
 				for (let i = 0; i < selectedPlatforms.length; i++) {
 					const platform = selectedPlatforms[i];
@@ -205,8 +193,8 @@ async function initializeProject({
 
 	if (selectedPlugins) {
 		jobs.push({
-			start: 'Adding additional plugins.',
-			stop: 'Successfully added additional plugins.',
+			start: 'Adding additional plugins',
+			stop: 'Successfully added additional plugins',
 			task: async () => {
 				let installCommand = `${pm} install`;
 				for (let i = 0; i < selectedPlugins.length; i++) {
@@ -225,16 +213,19 @@ async function initializeProject({
 			const packageDir = path.dirname(fileURLToPath(import.meta.url));
 			const consumerDir = process.cwd();
 
-			if (!existsSync(`${consumerDir}/scripts`) || !isDirectory(`${consumerDir}/scripts`))
+			if (!existsSync(`${consumerDir}/scripts`) || !isDirectory(`${consumerDir}/scripts`)) {
 				await fs.mkdir(`${consumerDir}/scripts`);
+			}
 
-			return Promise.all([
-				fs.copyFile(`${packageDir}/../scripts/hotreload.js`, `${consumerDir}/scripts/hotreload.js`),
-				fs.copyFile(
-					`${packageDir}/../scripts/hotreload-cleanup.js`,
-					`${consumerDir}/scripts/hotreload-cleanup.js`
-				)
-			]);
+			await fs.copyFile(
+				`${packageDir}/../scripts/hotreload.js`,
+				`${consumerDir}/scripts/hotreload.js`
+			);
+
+			return fs.copyFile(
+				`${packageDir}/../scripts/hotreload-cleanup.js`,
+				`${consumerDir}/scripts/hotreload-cleanup.js`
+			);
 		}
 	});
 
@@ -252,20 +243,4 @@ async function initializeProject({
 	}
 
 	await executeJobs(jobs);
-}
-
-async function executeJobs(jobs) {
-	for (let i = 0; i < jobs.length; i++) {
-		const { start, stop, task } = jobs[i];
-		const s = spinner();
-		s.start(start);
-		try {
-			await task();
-		} catch (e) {
-			s.stop();
-			cancel(`Error: ${e.message}`);
-			process.exit(-1);
-		}
-		s.stop(stop);
-	}
 }

@@ -1,11 +1,17 @@
+import { cancel } from '@clack/prompts';
+import { spinner } from '@clack/prompts';
 import { exec } from 'child_process';
 import { existsSync, lstatSync } from 'fs';
+import { Job } from '../types/types.js';
 
-export function asyncExec(command) {
+export function asyncExec(command: string) {
 	return new Promise((resolve, reject) => {
 		const child = exec(command);
 		child.addListener('error', (err) => reject(err));
-		child.addListener('exit', resolve);
+		child.addListener('exit', () => {
+			console.log('Finished: ' + command);
+			resolve(null);
+		});
 	});
 }
 
@@ -29,6 +35,23 @@ export function getPM() {
 	return name === 'npminstall' ? 'npm' : name;
 }
 
-export async function isDirectory(path) {
+export function isDirectory(path: string) {
 	return lstatSync(path).isDirectory();
+}
+
+export async function executeJobs(jobs: Job[]) {
+	for (let i = 0; i < jobs.length; i++) {
+		const { start, stop, task } = jobs[i];
+		const s = spinner();
+		s.start(start);
+		try {
+			await task();
+		} catch (e) {
+			if (typeof e === 'string') cancel(`Error: ${e}`);
+			else if (e instanceof Error) cancel(`Error: ${e.message}`);
+			s.stop();
+			process.exit(-1);
+		}
+		s.stop(stop);
+	}
 }
