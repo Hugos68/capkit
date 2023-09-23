@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.7
+
+### Patch Changes
+
+- 4cbc8cf: Fixed file pathing issues
+
 ## 0.5.6
 
 ### Patch Changes
