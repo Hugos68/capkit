@@ -20,18 +20,25 @@ Before starting be aware that Capacitor will only work with [Adapter Static](htt
 To get started with the CLI you can simply go into your existing sveltekit project and run:
 
 npm:
+
 ```bash
 npx capkit init
 ```
+
 pnpm:
+
 ```bash
 pnpm dlx capkit init
 ```
+
 yarn:
+
 ```bash
 yarn dlx capkit init
 ```
+
 bun:
+
 ```bash
 bunx capkit init
 ```
@@ -47,18 +54,25 @@ Upon doing this, you will be guided through a series of questions to help you co
 When working with native applications and using their respective IDE's (Android Studio or Xcode) you can enable hot reloading by running:
 
 npm:
+
 ```bash
 npm run dev:cap
 ```
+
 pnpm:
+
 ```bash
 pnpm dev:cap
 ```
+
 yarn:
+
 ```bash
 yarn dev:cap
 ```
+
 bun:
+
 ```bash
 bunx dev:cap
 ```
@@ -66,18 +80,25 @@ bunx dev:cap
 If you are solely focusing on creating a progressive web app you can run:
 
 npm:
+
 ```bash
 npm run dev
 ```
+
 pnpm:
+
 ```bash
 pnpm dev
 ```
+
 yarn:
+
 ```bash
 yarn dev
 ```
+
 bun:
+
 ```bash
 bunx dev
 ```
@@ -87,18 +108,25 @@ bunx dev
 When building to native platforms you can use:
 
 npm:
+
 ```bash
 npm run build:cap
 ```
+
 pnpm:
+
 ```bash
 pnpm build:cap
 ```
+
 yarn:
+
 ```bash
 yarn build:cap
 ```
+
 bun:
+
 ```bash
 bunx build:cap
 ```
@@ -106,26 +134,41 @@ bunx build:cap
 If you are solely focusing on building a progressive web app you can run:
 
 npm:
+
 ```bash
 npm run build
 ```
+
 pnpm:
+
 ```bash
 pnpm build
 ```
+
 yarn:
+
 ```bash
 yarn build
 ```
+
 bun:
+
 ```bash
 bunx build
 ```
+
 ---
 
 ## Capacitor
 
 For further questions about Capacitor you can refer to the [Capacitor Docs](https://capacitorjs.com/docs).
+
+---
+
+## Examples
+
+Here is a example project of a SvelteKit app with Capacitor deployed to Vercel: https://capkit-vercel.vercel.app/
+Repository: https://github.com/Hugos68/capkit-vercel
 
 ---
 
