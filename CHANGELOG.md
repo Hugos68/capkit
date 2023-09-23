@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.8
+
+### Patch Changes
+
+- 3b464ed: Fixed file paths
+
 ## 0.5.7
 
 ### Patch Changes
