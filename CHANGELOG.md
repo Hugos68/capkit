@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.5
+
+### Patch Changes
+
+- f899bb2: Fixed types decl
+
 ## 0.5.4
 
 ### Patch Changes
