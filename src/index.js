@@ -229,14 +229,27 @@ async function initializeProject({
 				await fs.mkdir(`${consumerDir}/scripts`);
 
 			return Promise.all([
-				fs.copyFile(`${packageDir}/scripts/hotreload.js`, `${consumerDir}/scripts/hotreload.js`),
+				fs.copyFile(`${packageDir}/../scripts/hotreload.js`, `${consumerDir}/scripts/hotreload.js`),
 				fs.copyFile(
-					`${packageDir}/scripts/hotreload-cleanup.js`,
+					`${packageDir}/../scripts/hotreload-cleanup.js`,
 					`${consumerDir}/scripts/hotreload-cleanup.js`
 				)
 			]);
 		}
 	});
+
+	if (existsSync(`${process.cwd()}/.gitignore`)) {
+		jobs.push({
+			start: `Configuring: "${kleur.cyan('.gitignore')}"`,
+			stop: `Successfully configured: "${kleur.cyan('.gitignore')}"`,
+			task: async () => {
+				const gitignores = ['# Capacitor', '/android', '/ios', 'capacitor.config.json.timestamp-*'];
+				const gitignore = await fs.readFile(`${process.cwd()}/.gitignore`, 'utf-8');
+				const newGitignore = gitignore + '\n' + gitignores.join('\n');
+				return fs.writeFile('.gitignore', newGitignore, 'utf-8');
+			}
+		});
+	}
 
 	await executeJobs(jobs);
 }
