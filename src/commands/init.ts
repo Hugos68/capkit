@@ -38,10 +38,13 @@ async function promptOptions() {
 
 	const name = (await text({
 		message: `What is the ${kleur.underline('name')} of your project?`,
-		placeholder: packageJsonName
+		placeholder: packageJsonName,
+		validate: (value) => {
+			if (value.length < 1) return 'Invalid name. Must be at least 1 character long.';
+		}
 	})) as string;
 
-	const id = await text({
+	const id = (await text({
 		message: `What is the ${kleur.underline('ID')} of your project?`,
 		placeholder: `com.company.${name}`,
 		validate: (value) => {
@@ -49,7 +52,7 @@ async function promptOptions() {
 				return `Invalid App ID "${value}". Must be in Java package form with no dashes (ex: com.example.app)`;
 			}
 		}
-	});
+	})) as string;
 
 	const shouldPromptPlatforms = await confirm({
 		message: 'Do you want to add additional platforms?'
@@ -59,7 +62,7 @@ async function promptOptions() {
 	if (shouldPromptPlatforms) {
 		const platforms = ['Android', 'iOS'];
 		selectedPlatforms = (await multiselect({
-			message: 'What platforms do you want to add? (Optional)',
+			message: 'What platforms do you want to add?',
 			options: platforms.map((platform) => {
 				return {
 					value: platform.toLowerCase(),
@@ -104,7 +107,7 @@ async function promptOptions() {
 	let selectedPlugins: string[] | null = null;
 	if (shouldPromptPlugins) {
 		selectedPlugins = (await multiselect({
-			message: 'What plugins do you want to add? (Optional)',
+			message: 'What plugins do you want to add?',
 			options: plugins.map((plugin) => {
 				return {
 					value: plugin.toLowerCase().replace(/ /g, '-'),
