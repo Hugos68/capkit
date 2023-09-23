@@ -14,7 +14,7 @@ program.version('0.0.1');
 program
 	.command('initialize')
 	.alias('init')
-	.description('Initialize capkit')
+	.description('initialize capkit')
 	.action(async () => {
 		intro(`Welcome to the ${kleur.underline('capkit')} CLI!`);
 		const options = await promptOptions();
