@@ -13,9 +13,7 @@
 		"lint:write": "prettier --write . && eslint . --fix",
 		"format": "prettier --write .",
 		"check": "tsc --noEmit",
-		"release": "pnpm run build && changeset publish",
-		"dev:cap": "node ./scripts/hotreload.js && npx cap sync && node ./scripts/hotreload-cleanup.js && npm run build",
-		"build:cap": "vite build && npx cap sync"
+		"release": "pnpm run build && changeset publish"
 	},
 	"repository": {
 		"type": "git",

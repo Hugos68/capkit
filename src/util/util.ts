@@ -7,11 +7,8 @@ import { Job } from '../types/types.js';
 export function asyncExec(command: string) {
 	return new Promise((resolve, reject) => {
 		const child = exec(command);
-		child.addListener('error', (err) => reject(err));
-		child.addListener('exit', () => {
-			console.log('Finished: ' + command);
-			resolve(null);
-		});
+		child.addListener('error', reject);
+		child.addListener('exit', resolve);
 	});
 }
 
@@ -49,7 +46,6 @@ export async function executeJobs(jobs: Job[]) {
 		} catch (e) {
 			if (typeof e === 'string') cancel(`Error: ${e}`);
 			else if (e instanceof Error) cancel(`Error: ${e.message}`);
-			s.stop();
 			process.exit(-1);
 		}
 		s.stop(stop);
