@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.4
+
+### Patch Changes
+
+- 66c45f2: Added type decl for exports
+
 ## 0.5.3
 
 ### Patch Changes
