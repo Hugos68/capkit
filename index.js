@@ -5,7 +5,7 @@ import { promises as fs, existsSync } from 'fs';
 import { asyncExec, getConfigExtension, getPM, isDirectory } from './util.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { underline, grey, cyan } from 'kleur';
+import kleur from 'kleur';
 
 const program = new Command();
 
@@ -16,11 +16,11 @@ program
 	.alias('init')
 	.description('Initialize capkit')
 	.action(async () => {
-		intro(`Welcome to the ${underline('capkit')} CLI!`);
+		intro(`Welcome to the ${kleur.underline('capkit')} CLI!`);
 		const options = await promptOptions();
 		await initializeProject(options);
 		outro(
-			`You're all set! Happy coding!\n\n${grey(
+			`You're all set! Happy coding!\n\n${kleur.grey(
 				'If you run into any issues, please report them here: https://github.com/Hugos68/capkit/issues/new'
 			)}`
 		);
@@ -32,9 +32,9 @@ async function promptOptions() {
 
 	if (configExtension) {
 		const shouldContinue = await confirm({
-			message: `Found existing Capacitor config: "${cyan(
+			message: `Found existing Capacitor config: "${kleur.cyan(
 				`capacitor.config.${configExtension}`
-			)}".\nProceeding will ${underline(
+			)}".\nProceeding will ${kleur.underline(
 				'overwrite your current configuration'
 			)}. Do you want to continue?`
 		});
@@ -47,13 +47,13 @@ async function promptOptions() {
 	const packageJsonName = JSON.parse(await fs.readFile('package.json'))['name'];
 
 	const name = await text({
-		message: `What is the ${underline('name')} of your project?`,
+		message: `What is the ${kleur.underline('name')} of your project?`,
 		placeholder: packageJsonName,
 		required: true
 	});
 
 	const id = await text({
-		message: `What is the ${underline('ID')} of your project?`,
+		message: `What is the ${kleur.underline('ID')} of your project?`,
 		placeholder: `com.company.${name}`,
 		validate: (value) =>
 			/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(value.toLowerCase())
@@ -149,8 +149,8 @@ async function initializeProject({
 	const jobs = [];
 
 	jobs.push({
-		start: `Configuring: "${cyan('package.json')}"`,
-		stop: `Successfully configured: "${cyan('package.json')}"`,
+		start: `Configuring: "${kleur.cyan('package.json')}"`,
+		stop: `Successfully configured: "${kleur.cyan('package.json')}"`,
 		task: async () => {
 			const packageJson = JSON.parse(await fs.readFile('package.json'));
 			packageJson.scripts['dev:cap'] =
@@ -200,8 +200,8 @@ async function initializeProject({
 
 	if (configExtension) {
 		jobs.push({
-			start: `Removing existing config: "${cyan(`capacitor.config.${configExtension}`)}"`,
-			stop: `Successfully removed existing config: "${cyan(
+			start: `Removing existing config: "${kleur.cyan(`capacitor.config.${configExtension}`)}"`,
+			stop: `Successfully removed existing config: "${kleur.cyan(
 				`capacitor.config.${configExtension}`
 			)}"`,
 			task: async () => fs.unlink(`capacitor.config.${configExtension}`)
@@ -209,8 +209,8 @@ async function initializeProject({
 	}
 
 	jobs.push({
-		start: `Creating: "${cyan('capacitor.config.json')}"`,
-		stop: `Successfully created: "${cyan('capacitor.config.json')}"`,
+		start: `Creating: "${kleur.cyan('capacitor.config.json')}"`,
+		stop: `Successfully created: "${kleur.cyan('capacitor.config.json')}"`,
 		task: async () =>
 			fs.writeFile(
 				'capacitor.config.json',
