@@ -9,4 +9,10 @@ program.command('initialize').alias('init').description('initialize capkit').act
 program.parse(process.argv);
 
 export { initializeProject } from './commands/init.js';
-export { ProjectOptions, Platform, Plugin, ConfigExtension, PackageManager } from './types/types.js';
+export {
+	ProjectOptions,
+	Platform,
+	Plugin,
+	ConfigExtension,
+	PackageManager
+} from './types/types.js';
