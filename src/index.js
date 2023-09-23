@@ -229,9 +229,9 @@ async function initializeProject({
 				await fs.mkdir(`${consumerDir}/scripts`);
 
 			return Promise.all([
-				fs.copyFile(`${packageDir}/scripts/hotreload.js`, `${consumerDir}/scripts/hotreload.js`),
+				fs.copyFile(`${packageDir}/../scripts/hotreload.js`, `${consumerDir}/scripts/hotreload.js`),
 				fs.copyFile(
-					`${packageDir}/scripts/hotreload-cleanup.js`,
+					`${packageDir}/../scripts/hotreload-cleanup.js`,
 					`${consumerDir}/scripts/hotreload-cleanup.js`
 				)
 			]);
