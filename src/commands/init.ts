@@ -243,12 +243,12 @@ export async function initializeProject({
 			}
 
 			await fs.copyFile(
-				`${packageDir}/../../scripts/hotreload.js`,
+				`${packageDir}/../scripts/hotreload.js`,
 				`${consumerDir}/scripts/hotreload.js`
 			);
 
 			return fs.copyFile(
-				`${packageDir}/../../scripts/hotreload-cleanup.js`,
+				`${packageDir}/../scripts/hotreload-cleanup.js`,
 				`${consumerDir}/scripts/hotreload-cleanup.js`
 			);
 		}
