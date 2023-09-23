@@ -1,5 +1,11 @@
 # capkit
 
+## 0.4.2
+
+### Patch Changes
+
+- 2343f15: Fixed kleur imports
+
 ## 0.4.1
 
 ### Patch Changes
