@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.1
+
+### Patch Changes
+
+- bc0e345: Reordered jobs to make ios and android additions succeed
+
 ## 0.5.0
 
 ### Minor Changes
