@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.0
+
+### Minor Changes
+
+- f8ebe9a: Added gitignore job, /ios, /android and temp files are now removed
+
 ## 0.4.2
 
 ### Patch Changes
