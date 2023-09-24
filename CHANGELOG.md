@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.10
+
+### Patch Changes
+
+- fcdb613: Added banner to CLI
+
 ## 0.5.9
 
 ### Patch Changes
