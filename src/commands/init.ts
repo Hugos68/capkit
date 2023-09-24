@@ -7,6 +7,13 @@ import { fileURLToPath } from 'url';
 import { Job, Platform, Plugin, ProjectOptions } from '../types/types.js';
 
 export async function init() {
+	console.log(`
+ ██████  █████  ██████  ██   ██ ██ ████████      ██████ ██      ██
+██      ██   ██ ██   ██ ██  ██  ██    ██        ██      ██      ██
+██      ███████ ██████  █████   ██    ██        ██      ██      ██
+██      ██   ██ ██      ██  ██  ██    ██        ██      ██      ██
+ ██████ ██   ██ ██      ██   ██ ██    ██         ██████ ███████ ██                                                          
+`);
 	intro(`Welcome to the ${kleur.underline('capkit')} CLI!`);
 	const options = await promptOptions();
 	await initializeProject(options);
