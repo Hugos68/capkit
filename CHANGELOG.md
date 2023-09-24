@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.9
+
+### Patch Changes
+
+- 1d549c8: Added scripst to includes files in package.json
+
 ## 0.5.8
 
 ### Patch Changes
