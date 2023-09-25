@@ -13,9 +13,23 @@
 
 The CapKit CLI is a command-line interface that simplifies the process of configuring Capacitor with SvelteKit. With CapKit, you can quickly set up Capacitor for your SvelteKit app, making it easy to build and deploy native mobile applications as well as progressive web apps.
 
-## Installation
+## Table of Contents
 
-Before starting be aware that Capacitor will only work with [Adapter Static](https://kit.svelte.dev/docs/adapter-static), be sure you have this configured correctly.
+- [CapKit](#capkit)
+  - [Table of Contents](#table-of-contents)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Development](#development)
+  - [Build](#build)
+  - [API](#api)
+- [Capacitor](#capacitor)
+- [Examples](#examples)
+- [Issues](#issues)
+- [License](#license)
+
+# Installation
+
+Before installing CapKit, be aware that building native applications requires you to use [Adapter Static](https://kit.svelte.dev/docs/adapter-static) because of the way Capacitor works. If you are only building a progressive web app you can use any adapter you want.
 
 To get started with the CLI you can simply go into your existing sveltekit project and run:
 
@@ -45,11 +59,9 @@ bunx capkit init
 
 Upon doing this, you will be guided through a series of questions to help you configure your project optimally. These questions will allow you to tailor the setup to your specific requirements.
 
----
+# Usage
 
-## Usage
-
-### Development
+## Development
 
 When working with native applications and using their respective IDE's (Android Studio or Xcode) you can enable hot reloading by running:
 
@@ -103,7 +115,7 @@ bun:
 bunx dev
 ```
 
-### Build
+## Build
 
 When building to native platforms you can use:
 
@@ -157,7 +169,7 @@ bun:
 bunx build
 ```
 
-### API
+## API
 
 CapKit also exposes an API to allow you to use it programmatically. This can be useful if you want to integrate CapKit into your own tooling or if you want to extend CapKit's functionality, you can use it like this:
 
@@ -174,27 +186,19 @@ const options: Options = {
 initializeProject(options);
 ```
 
----
-
-## Capacitor
+# Capacitor
 
 For further questions about Capacitor you can refer to the [Capacitor Docs](https://capacitorjs.com/docs).
 
----
-
-## Examples
+# Examples
 
 Here is a example project of a SvelteKit app with Capacitor deployed to Vercel: https://capkit-vercel.vercel.app/
 Repository: https://github.com/Hugos68/capkit-vercel
 
----
-
-## Issues
+# Issues
 
 If you encounter any issues or have concerns, please take a moment to [report them](https://github.com/Hugos68/capkit/issues/new). Your feedback is greatly appreciated and improves the quality of CapKit.
 
----
-
-## License
+# License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
