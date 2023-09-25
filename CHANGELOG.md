@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.12
+
+### Patch Changes
+
+- b95b79d: Fixed opening dev server and logging out events
+
 ## 0.5.11
 
 ### Patch Changes
