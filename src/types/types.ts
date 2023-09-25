@@ -5,12 +5,11 @@ export type Job = {
 };
 
 export type ProjectOptions = {
-	name: string;
-	id: string;
-	selectedPlatforms: Platform[];
-	selectedPlugins: Plugin[];
-	configExtension: ConfigExtension | null;
-	pm: PackageManager;
+	appName: string;
+	appId: string;
+	platforms: Platform[];
+	plugins: Plugin[];
+	packageManager: PackageManager;
 };
 
 export type Platform = 'Android' | 'iOS';

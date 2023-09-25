@@ -43,7 +43,7 @@ async function promptOptions() {
 
 	const packageJsonName = JSON.parse(String(await fs.readFile('package.json')))['name'];
 
-	const name = (await text({
+	const appName = (await text({
 		message: `What is the ${kleur.underline('name')} of your project?`,
 		placeholder: packageJsonName,
 		validate: (value) => {
@@ -51,9 +51,9 @@ async function promptOptions() {
 		}
 	})) as string;
 
-	const id = (await text({
+	const appId = (await text({
 		message: `What is the ${kleur.underline('ID')} of your project?`,
-		placeholder: `com.company.${name}`,
+		placeholder: `com.company.${appName}`,
 		validate: (value) => {
 			if (!/^[a-z][a-z0-9_]*(\.[a-z0-9_]+)+$/.test(value.toLowerCase())) {
 				return `Invalid App ID "${value}". Must be in Java package form with no dashes (ex: com.example.app)`;
@@ -65,13 +65,13 @@ async function promptOptions() {
 		message: 'Do you want to add additional platforms?'
 	});
 
-	const platforms = ['Android', 'iOS'];
+	const allPlatforms = ['Android', 'iOS'];
 
-	let selectedPlatforms: Platform[] | null = null;
+	let platforms: Platform[] | null = null;
 	if (shouldPromptPlatforms) {
-		selectedPlatforms = (await multiselect({
+		platforms = (await multiselect({
 			message: 'What platforms do you want to add?',
-			options: platforms.map((platform) => {
+			options: allPlatforms.map((platform) => {
 				return {
 					value: platform.toLowerCase() as Platform,
 					label: platform
@@ -81,7 +81,7 @@ async function promptOptions() {
 		})) as Platform[];
 	}
 
-	const plugins = [
+	const allPlugins = [
 		'Action Sheet',
 		'App',
 		'App Launcher',
@@ -112,11 +112,11 @@ async function promptOptions() {
 		message: 'Do you want to add additional plugins?'
 	});
 
-	let selectedPlugins: Plugin[] | null = null;
+	let plugins: Plugin[] | null = null;
 	if (shouldPromptPlugins) {
-		selectedPlugins = (await multiselect({
+		plugins = (await multiselect({
 			message: 'What plugins do you want to add?',
-			options: plugins.map((plugin) => {
+			options: allPlugins.map((plugin) => {
 				return {
 					value: plugin.toLowerCase().replace(/ /g, '-') as Plugin,
 					label: plugin
@@ -126,41 +126,37 @@ async function promptOptions() {
 		})) as Plugin[];
 	}
 
-	const pm = getPM();
+	const packageManager = getPM();
 
 	const options = {
-		name,
-		id,
-		selectedPlatforms,
-		selectedPlugins,
-		configExtension,
-		pm
+		appName,
+		appId,
+		platforms,
+		plugins,
+		packageManager
 	} as ProjectOptions;
 
 	return options;
 }
 
 export async function initializeProject({
-	name: appName,
-	id: appId,
-	selectedPlatforms,
-	configExtension,
-	selectedPlugins,
-	pm
+	appName,
+	appId,
+	platforms,
+	plugins,
+	packageManager
 }: ProjectOptions) {
 	const jobs: Job[] = [];
 
-	/*
-		Configuration jobs
-	*/
-
-	if (configExtension) {
+	/* Configuration jobs */
+	const extension = getConfigExtension();
+	if (extension) {
 		jobs.push({
-			start: `Removing existing config: "${kleur.cyan(`capacitor.config.${configExtension}`)}"`,
+			start: `Removing existing config: "${kleur.cyan(`capacitor.config.${extension}`)}"`,
 			stop: `Successfully removed existing config: "${kleur.cyan(
-				`capacitor.config.${configExtension}`
+				`capacitor.config.${extension}`
 			)}"`,
-			task: async () => await fs.unlink(`capacitor.config.${configExtension}`)
+			task: async () => await fs.unlink(`capacitor.config.${extension}`)
 		});
 	}
 
@@ -186,50 +182,55 @@ export async function initializeProject({
 	});
 
 	if (existsSync(`${process.cwd()}/.gitignore`)) {
-		jobs.push({
-			start: `Configuring: "${kleur.cyan('.gitignore')}"`,
-			stop: `Successfully configured: "${kleur.cyan('.gitignore')}"`,
-			task: async () => {
-				const gitignores = ['# Capacitor', '/android', '/ios', 'capacitor.config.json.timestamp-*'];
-				const gitignore = await fs.readFile(`${process.cwd()}/.gitignore`, 'utf-8');
-				const newGitignore = gitignore + '\n' + gitignores.join('\n');
-				return fs.writeFile('.gitignore', newGitignore, 'utf-8');
-			}
-		});
+		const gitignore = await fs.readFile(`${process.cwd()}/.gitignore`, 'utf-8');
+		if (!gitignore.includes('# Capacitor')) {
+			jobs.push({
+				start: `Configuring: "${kleur.cyan('.gitignore')}"`,
+				stop: `Successfully configured: "${kleur.cyan('.gitignore')}"`,
+				task: async () => {
+					const gitignores = [
+						'# Capacitor',
+						'/android',
+						'/ios',
+						'capacitor.config.json.timestamp-*'
+					];
+					const gitignore = await fs.readFile(`${process.cwd()}/.gitignore`, 'utf-8');
+					const newGitignore = gitignore + '\n' + gitignores.join('\n');
+					return fs.writeFile('.gitignore', newGitignore, 'utf-8');
+				}
+			});
+		}
 	}
 
-	/*
-		Install jobs
-	*/
-
+	/* Install jobs */
 	jobs.push({
 		start: 'Installing Capacitor',
 		stop: 'Successfully installed Capacitor',
-		task: async () => await asyncExec(`${pm} install @capacitor/cli @capacitor/core`)
+		task: async () => await asyncExec(`${packageManager} install @capacitor/cli @capacitor/core`)
 	});
 
-	if (selectedPlatforms) {
+	if (platforms) {
 		jobs.push({
 			start: 'Adding additional platforms',
 			stop: 'Successfully added additional platforms',
 			task: async () => {
-				for (let i = 0; i < selectedPlatforms.length; i++) {
-					const platform = selectedPlatforms[i];
-					await asyncExec(`${pm} install @capacitor/${platform}`);
+				for (let i = 0; i < platforms.length; i++) {
+					const platform = platforms[i];
+					await asyncExec(`${packageManager} install @capacitor/${platform}`);
 					await asyncExec(`npx cap add ${platform}`);
 				}
 			}
 		});
 	}
 
-	if (selectedPlugins) {
+	if (plugins) {
 		jobs.push({
 			start: 'Adding additional plugins',
 			stop: 'Successfully added additional plugins',
 			task: async () => {
-				let installCommand = `${pm} install`;
-				for (let i = 0; i < selectedPlugins.length; i++) {
-					const platform = selectedPlugins[i];
+				let installCommand = `${packageManager} install`;
+				for (let i = 0; i < plugins.length; i++) {
+					const platform = plugins[i];
 					installCommand += ` @capacitor/${platform}`;
 				}
 				return await asyncExec(installCommand);
