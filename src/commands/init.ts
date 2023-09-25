@@ -126,30 +126,22 @@ async function promptOptions() {
 		})) as Plugin[];
 	}
 
-	const packageManager = getPM();
-
 	const options = {
 		appName,
 		appId,
 		platforms,
-		plugins,
-		packageManager
+		plugins
 	} as ProjectOptions;
 
 	return options;
 }
 
-export async function initializeProject({
-	appName,
-	appId,
-	platforms,
-	plugins,
-	packageManager
-}: ProjectOptions) {
+export async function initializeProject({ appName, appId, platforms, plugins }: ProjectOptions) {
+	const extension = getConfigExtension();
+	const packageManager = getPM();
 	const jobs: Job[] = [];
 
 	/* Configuration jobs */
-	const extension = getConfigExtension();
 	if (extension) {
 		jobs.push({
 			start: `Removing existing config: "${kleur.cyan(`capacitor.config.${extension}`)}"`,

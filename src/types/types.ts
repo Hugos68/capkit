@@ -9,7 +9,6 @@ export type ProjectOptions = {
 	appId: string;
 	platforms: Platform[];
 	plugins: Plugin[];
-	packageManager: PackageManager;
 };
 
 export type Platform = 'Android' | 'iOS';

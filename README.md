@@ -157,6 +157,23 @@ bun:
 bunx build
 ```
 
+### API
+
+CapKit also exposes an API to allow you to use it programmatically. This can be useful if you want to integrate CapKit into your own tooling or if you want to extend CapKit's functionality, you can use it like this:
+
+```ts
+import { initializeProject, type Options } from 'capkit';
+
+const options: Options = {
+	appName: 'My App',
+	appId: 'com.myapp',
+	platforms: ['android', 'ios'],
+	plugins: ['clipboard', 'push-notifications'] // See a full list of plugins here: https://capacitorjs.com/docs/apis
+};
+
+initializeProject(options);
+```
+
 ---
 
 ## Capacitor
