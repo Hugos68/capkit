@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.15
+
+### Patch Changes
+
+- 1835b5b: Dropped dev command from script and renamed hotreload to syncnetworkconfig
+
 ## 0.5.14
 
 ### Patch Changes
