@@ -1,6 +1,5 @@
 import { exec } from 'child_process';
 import { promises as fs } from 'fs';
-import { getPM } from '../util/util.js';
 import os from 'os';
 
 async function hotreload() {
@@ -73,4 +72,15 @@ async function cleanup() {
 			await fs.unlink(file);
 		}
 	}
+}
+
+function getPM() {
+	const userAgent = process.env.npm_config_user_agent;
+	if (!userAgent) {
+		return 'npm';
+	}
+	const pmSpec = userAgent.split(' ')[0] || '';
+	const separatorPos = pmSpec.lastIndexOf('/');
+	const name = pmSpec?.substring(0, separatorPos);
+	return name === 'npminstall' ? 'npm' : name;
 }
