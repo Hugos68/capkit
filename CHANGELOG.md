@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.19
+
+### Patch Changes
+
+- 2292fe7: Improved docs -> TOC
+
 ## 0.5.18
 
 ### Patch Changes
