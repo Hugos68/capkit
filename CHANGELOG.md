@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.17
+
+### Patch Changes
+
+- 6a0d894: Converted internal config to json rather than js
+
 ## 0.5.16
 
 ### Patch Changes
