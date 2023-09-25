@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.16
+
+### Patch Changes
+
+- bee2a49: Improved exposed API types and names
+
 ## 0.5.15
 
 ### Patch Changes
