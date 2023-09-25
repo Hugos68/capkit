@@ -1,6 +1,6 @@
 {
 	"name": "capkit",
-	"version": "0.5.15",
+	"version": "0.5.16",
 	"description": "",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
