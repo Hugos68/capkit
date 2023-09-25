@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 import { promises as fs } from 'fs';
+import { getPM } from '../util/util.js';
 import os from 'os';
 
 async function hotreload() {
@@ -25,7 +26,10 @@ async function hotreload() {
 	cleanup();
 
 	// Run dev server
-	exec('vite dev');
+	const pm = getPM();
+	exec(`${pm === 'npm' ? `${pm} run` : pm} dev --host}`, (error, stdout) => {
+		console.log(stdout);
+	});
 }
 
 try {
