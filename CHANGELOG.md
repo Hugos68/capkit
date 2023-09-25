@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.18
+
+### Patch Changes
+
+- 8a784a3: Improved gitignore job, fills in missing gitignores
+
 ## 0.5.17
 
 ### Patch Changes
