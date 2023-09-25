@@ -30,14 +30,13 @@ async function hotreload() {
 
 try {
 	hotreload();
-} catch(e) {
+} catch (e) {
 	cleanup().then(() => {
 		if (e instanceof Error) console.error(e.message);
 		else console.error(e);
 		process.exit(-1);
 	});
 }
-
 
 function getIp() {
 	const ifaces = os.networkInterfaces();
