@@ -26,7 +26,7 @@ async function hotreload() {
 
 	// Run dev server
 	const pm = getPM();
-	exec(`${pm === 'npm' ? `${pm} run` : pm} dev --host}`, (error, stdout) => {
+	exec(`${pm === 'npm' ? `${pm} run` : pm} dev --host`, (error, stdout) => {
 		console.log(stdout);
 	});
 }
