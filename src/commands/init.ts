@@ -179,7 +179,7 @@ export async function initializeProject({
 		stop: `Successfully configured: "${kleur.cyan('package.json')}"`,
 		task: async () => {
 			const packageJson = JSON.parse(String(await fs.readFile('package.json')));
-			packageJson.scripts['dev:cap'] = 'node scripts/hotreload.js';
+			packageJson.scripts['dev:cap'] = 'node scripts/syncnetworkconfig.js && vite dev --host';
 			packageJson.scripts['build:cap'] = 'vite build && npx cap sync';
 			return await fs.writeFile('package.json', JSON.stringify(packageJson, null, 2));
 		}
@@ -249,8 +249,8 @@ export async function initializeProject({
 			}
 
 			return fs.copyFile(
-				`${packageDir}/scripts/hotreload.js`,
-				`${consumerDir}/scripts/hotreload.js`
+				`${packageDir}/scripts/syncnetworkconfig.js`,
+				`${consumerDir}/scripts/syncnetworkconfig.js`
 			);
 		}
 	});

@@ -2,7 +2,7 @@ import { exec } from 'child_process';
 import { promises as fs } from 'fs';
 import os from 'os';
 
-async function hotreload() {
+async function syncNetworkConfig() {
 	// Read and cache config
 	const capacitorConfigRaw = await fs.readFile('./capacitor.config.json');
 	await fs.copyFile('./capacitor.config.json', `./capacitor.config.json.timestamp-${Date.now()}`);
@@ -23,17 +23,12 @@ async function hotreload() {
 
 	// Restore config
 	cleanup();
-
-	// Run dev server
-	const pm = getPM();
-	exec(`${pm === 'npm' ? `${pm} run` : pm} dev --host`, (error, stdout) => {
-		console.log(stdout);
-	});
 }
 
 try {
-	hotreload();
+	syncNetworkConfig();
 } catch (e) {
+	// Cleanup in case of an error
 	cleanup().then(() => {
 		if (e instanceof Error) console.error(e.message);
 		else console.error(e);
@@ -72,15 +67,4 @@ async function cleanup() {
 			await fs.unlink(file);
 		}
 	}
-}
-
-function getPM() {
-	const userAgent = process.env.npm_config_user_agent;
-	if (!userAgent) {
-		return 'npm';
-	}
-	const pmSpec = userAgent.split(' ')[0] || '';
-	const separatorPos = pmSpec.lastIndexOf('/');
-	const name = pmSpec?.substring(0, separatorPos);
-	return name === 'npminstall' ? 'npm' : name;
 }
