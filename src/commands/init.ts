@@ -174,24 +174,18 @@ export async function initializeProject({ appName, appId, platforms, plugins }: 
 	});
 
 	if (existsSync(`${process.cwd()}/.gitignore`)) {
-		const gitignore = await fs.readFile(`${process.cwd()}/.gitignore`, 'utf-8');
-		if (!gitignore.includes('# Capacitor')) {
-			jobs.push({
-				start: `Configuring: "${kleur.cyan('.gitignore')}"`,
-				stop: `Successfully configured: "${kleur.cyan('.gitignore')}"`,
-				task: async () => {
-					const gitignores = [
-						'# Capacitor',
-						'/android',
-						'/ios',
-						'capacitor.config.json.timestamp-*'
-					];
-					const gitignore = await fs.readFile(`${process.cwd()}/.gitignore`, 'utf-8');
-					const newGitignore = gitignore + '\n' + gitignores.join('\n');
-					return fs.writeFile('.gitignore', newGitignore, 'utf-8');
-				}
-			});
-		}
+		jobs.push({
+			start: `Configuring: "${kleur.cyan('.gitignore')}"`,
+			stop: `Successfully configured: "${kleur.cyan('.gitignore')}"`,
+			task: async () => {
+				const lines = ['# Capacitor', '/android', '/ios', 'capacitor.config.json.timestamp-*'];
+				const gitignore = await fs.readFile(`${process.cwd()}/.gitignore`, 'utf-8');
+				const uniqueLines = lines.filter((line) => !gitignore.includes(line));
+				if (uniqueLines.length === 0) return;
+				const newGitignore = gitignore + '\n' + uniqueLines.join('\n');
+				return fs.writeFile('.gitignore', newGitignore, 'utf-8');
+			}
+		});
 	}
 
 	/* Install jobs */
