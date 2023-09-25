@@ -9,8 +9,8 @@
 		"capkit": "dist/index.js"
 	},
 	"scripts": {
-		"dev": "tsup src/index.ts --format esm --dts --watch",
-		"build": "tsup src/index.ts --format esm --dts",
+		"dev": "tsup src/index.ts src/scripts/hotreload.ts --format esm --dts --watch",
+		"build": "tsup src/index.ts src/scripts/hotreload.ts --format esm --dts",
 		"lint": "prettier --check . && eslint .",
 		"lint:write": "prettier --write . && eslint . --fix",
 		"format": "prettier --write .",
