@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.14
+
+### Patch Changes
+
+- c82028e: Removed typo causing dev server to fail
+
 ## 0.5.13
 
 ### Patch Changes
