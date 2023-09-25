@@ -1,5 +1,0 @@
----
-'capkit': patch
----
-
-Added types
