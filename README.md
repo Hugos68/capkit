@@ -157,6 +157,24 @@ bun:
 bunx build
 ```
 
+### Progammatically using CapKit
+
+You can also use capkit programatically:
+```ts
+import { initializeProject, type ProjectOptions } from 'capkit';
+
+const options: Options = {
+  name: 'example',
+  id: 'com.example',
+  selectedPlatforms: ['ios', 'android'],
+  selectedPlugins: ['clipboard', 'device', etc..],
+  configExtension: 'json',
+  pm: 'npm'
+}
+
+initializeProject(options);
+```
+
 ---
 
 ## Capacitor
