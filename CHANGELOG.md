@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.13
+
+### Patch Changes
+
+- 93717f7: Fixed tsup chunking
+
 ## 0.5.12
 
 ### Patch Changes
