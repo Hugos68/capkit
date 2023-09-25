@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.11
+
+### Patch Changes
+
+- 9d0f0b0: Converted hotreload to one script and uses now typescript
+
 ## 0.5.10
 
 ### Patch Changes
