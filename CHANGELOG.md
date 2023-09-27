@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.21
+
+### Patch Changes
+
+- dcd9366: Added proper version to -V command
+
 ## 0.5.20
 
 ### Patch Changes
