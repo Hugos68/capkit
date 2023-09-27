@@ -67,7 +67,7 @@ async function promptOptions() {
 
 	const allPlatforms = ['Android', 'iOS'];
 
-	let platforms: Platform[] | null = null;
+	let platforms: Platform[] = [];
 	if (shouldPromptPlatforms) {
 		platforms = (await multiselect({
 			message: 'What platforms do you want to add?',
@@ -112,7 +112,7 @@ async function promptOptions() {
 		message: 'Do you want to add additional plugins?'
 	});
 
-	let plugins: Plugin[] | null = null;
+	let plugins: Plugin[] = [];
 	if (shouldPromptPlugins) {
 		plugins = (await multiselect({
 			message: 'What plugins do you want to add?',
@@ -195,7 +195,7 @@ export async function initializeProject({ appName, appId, platforms, plugins }: 
 		task: async () => await asyncExec(`${packageManager} install @capacitor/cli @capacitor/core`)
 	});
 
-	if (platforms) {
+	if (platforms.length > 0) {
 		jobs.push({
 			start: 'Adding additional platforms',
 			stop: 'Successfully added additional platforms',
@@ -209,7 +209,7 @@ export async function initializeProject({ appName, appId, platforms, plugins }: 
 		});
 	}
 
-	if (plugins) {
+	if (plugins.length > 0) {
 		jobs.push({
 			start: 'Adding additional plugins',
 			stop: 'Successfully added additional plugins',
