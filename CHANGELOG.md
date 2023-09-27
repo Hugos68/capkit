@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.20
+
+### Patch Changes
+
+- 321b66e: Fixed bug where selecting no platforms would make the installation freeze (ty Liam)
+
 ## 0.5.19
 
 ### Patch Changes
