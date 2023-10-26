@@ -86,7 +86,7 @@ yarn dev:cap
 bun:
 
 ```bash
-bunx dev:cap
+bun dev:cap
 ```
 
 If you are solely focusing on creating a progressive web app you can run:
@@ -112,7 +112,7 @@ yarn dev
 bun:
 
 ```bash
-bunx dev
+bun dev
 ```
 
 ## Build
@@ -140,7 +140,7 @@ yarn build:cap
 bun:
 
 ```bash
-bunx build:cap
+bun build:cap
 ```
 
 If you are solely focusing on building a progressive web app you can run:
@@ -166,7 +166,7 @@ yarn build
 bun:
 
 ```bash
-bunx build
+bun build
 ```
 
 ## API
