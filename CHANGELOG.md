@@ -1,5 +1,11 @@
 # capkit
 
+## 0.5.22
+
+### Patch Changes
+
+- ccf7291: remove ios/ and android/ from .gitignore
+
 ## 0.5.21
 
 ### Patch Changes
