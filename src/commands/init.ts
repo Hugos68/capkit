@@ -178,7 +178,7 @@ export async function initializeProject({ appName, appId, platforms, plugins }: 
 			start: `Configuring: "${kleur.cyan('.gitignore')}"`,
 			stop: `Successfully configured: "${kleur.cyan('.gitignore')}"`,
 			task: async () => {
-				const lines = ['# Capacitor', '/android', '/ios', 'capacitor.config.json.timestamp-*'];
+				const lines = ['# Capacitor', 'capacitor.config.json.timestamp-*'];
 				const gitignore = await fs.readFile(`${process.cwd()}/.gitignore`, 'utf-8');
 				const uniqueLines = lines.filter((line) => !gitignore.includes(line));
 				if (uniqueLines.length === 0) return;
